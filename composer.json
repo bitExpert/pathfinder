@@ -1,0 +1,42 @@
+{
+  "name": "bitexpert/pathfinder",
+  "description": "PSR-7 compatible routing component",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Peter Hildenbrand",
+      "email": "P.Hildenbrand@bitExpert.de",
+      "homepage": "http://www.bitExpert.de"
+    },
+    {
+      "name": "Stephan Hochdörfer",
+      "email": "S.Hochdoerfer@bitExpert.de",
+      "homepage": "http://www.bitExpert.de"
+    }
+  ],
+  "require": {
+    "php": "^5.5|^7.0",
+    "bitexpert/slf4psrlog": "^0.1.0"
+  },
+  "require-dev": {
+    "phpunit/php-code-coverage": "^2.1.0",
+    "phpunit/phpunit": "^4.8",
+    "squizlabs/php_codesniffer": "^2.3",
+    "phpdocumentor/phpdocumentor": "^2.8",
+    "monolog/monolog": "^1.14.0",
+    "phing/phing": "^2.8.0",
+    "bitexpert/phing-securitychecker": "^0.2.1",
+    "zendframework/zend-diactoros": "^1.0.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "bitExpert\\Pathfinder\\": "src/bitExpert/Pathfinder"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "bitExpert\\Pathfinder\\": "tests/bitExpert/Pathfinder"
+    }
+  }
+}
