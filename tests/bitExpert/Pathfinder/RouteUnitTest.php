@@ -78,28 +78,28 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function actionTokenSetByConstructorGetsReturnedAsIs()
+    public function targetSetByConstructorGetsReturnedAsIs()
     {
         $route = new Route('get', '/info', 'test');
-        $this->assertSame('test', $route->getActionToken());
+        $this->assertSame('test', $route->getTarget());
     }
 
     /**
      * @test
      */
-    public function actionTokenSetByFunctionGetsReturnedAsIs()
+    public function targetTokenSetByFunctionGetsReturnedAsIs()
     {
         $route = Route::create()->to('test');
-        $this->assertSame('test', $route->getActionToken());
+        $this->assertSame('test', $route->getTarget());
     }
 
     /**
      * @test
      */
-    public function actionTokenSetByFactoryGetsReturnedAsIs()
+    public function targetSetByFactoryGetsReturnedAsIs()
     {
         $route = Route::create('GET', '/test', 'test');
-        $this->assertSame('test', $route->getActionToken());
+        $this->assertSame('test', $route->getTarget());
     }
 
     /**
@@ -117,13 +117,13 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function settingActionTokenIsImmutable()
+    public function settingTargetIsImmutable()
     {
         $route = Route::create();
         $route2 = $route->to('test');
 
         $this->assertInstanceOf(Route::class, $route2);
-        $this->assertNotEquals($route->getActionToken(), $route2->getActionToken());
+        $this->assertNotEquals($route->getTarget(), $route2->getTarget());
     }
 
     /**

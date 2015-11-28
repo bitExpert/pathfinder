@@ -15,7 +15,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * A more sophisticated implementation of an {@link \bitExpert\Pathfinder\Router}
- * which will map the current request path to a configured action token based on some
+ * which will map the current request path to a configured target based on some
  * regex magic.
  *
  * @api
@@ -31,13 +31,17 @@ class RegExRouter implements Router
      */
     protected $baseURL;
     /**
-     * @var string|null
+     * @var mixed|null
      */
-    protected $defaultActionToken;
+    protected $defaultTarget;
     /**
      * @var array
      */
     protected $routes;
+    /**
+     * @var string
+     */
+    protected $targetRequestAttribute;
 
     /**
      * Creates a new {@link \bitExpert\Pathfinder\RegexRouter}.
@@ -48,7 +52,8 @@ class RegExRouter implements Router
     {
         // completes the base url with a / if not set in configuration
         $this->baseURL = rtrim($baseURL, '/') . '/';
-        $this->defaultActionToken = null;
+        $this->defaultTarget = null;
+        $this->targetRequestAttribute = self::DEFAULT_TARGET_REQUEST_ATTRIBUTE;
         $this->routes = [];
 
         $this->logger = LoggerFactory::getLogger(__CLASS__);
@@ -57,9 +62,25 @@ class RegExRouter implements Router
     /**
      * {@inheritDoc}
      */
-    public function setDefaultActionToken($defaultActionToken)
+    public function setDefaultTarget($defaultTarget)
     {
-        $this->defaultActionToken = $defaultActionToken;
+        $this->defaultTarget = $defaultTarget;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setTargetRequestAttribute($targetRequestAttribute)
+    {
+        $this->targetRequestAttribute = $targetRequestAttribute;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getTargetRequestAttribute()
+    {
+        return $this->targetRequestAttribute;
     }
 
     /**
@@ -107,19 +128,19 @@ class RegExRouter implements Router
     /**
      * {@inheritDoc}
      */
-    public function resolveActionToken(ServerRequestInterface $request)
+    public function resolveTarget(ServerRequestInterface $request)
     {
         $requestUri = $request->getUri();
         if (!isset($this->routes[$request->getMethod()]) || null === $requestUri) {
             $this->logger->error(
                 sprintf(
-                    'No routes found for request method "%s". Returning default route "%s"',
+                    'No routes found for request method "%s". Returning default target "%s"',
                     $request->getMethod(),
-                    $this->defaultActionToken
+                    $this->defaultTarget
                 )
             );
 
-            return $request->withAttribute(self::ACTIONTOKEN_ATTR, $this->defaultActionToken);
+            return $request->withAttribute($this->targetRequestAttribute, $this->defaultTarget);
         }
 
         // strip query string if provided
@@ -148,24 +169,24 @@ class RegExRouter implements Router
 
                     $this->logger->debug(
                         sprintf(
-                            'Matching route found. Setting actionToken to "%s"',
-                            $route->getActionToken()
+                            'Matching route found. Setting target to "%s"',
+                            $route->getTarget()
                         )
                     );
 
-                    return $request->withAttribute(self::ACTIONTOKEN_ATTR, $route->getActionToken());
+                    return $request->withAttribute($this->targetRequestAttribute, $route->getTarget());
                 }
             }
         }
 
         $this->logger->debug(
             sprintf(
-                'No matching route found. Setting default actionToken "%s"',
-                $this->defaultActionToken
+                'No matching route found. Setting default target "%s"',
+                $this->defaultTarget
             )
         );
 
-        return $request->withAttribute(self::ACTIONTOKEN_ATTR, $this->defaultActionToken);
+        return $request->withAttribute($this->getTargetRequestAttribute(), $this->defaultTarget);
     }
 
     /**
@@ -234,8 +255,8 @@ class RegExRouter implements Router
             throw new \ConfigurationException('Route must have defined a path');
         }
 
-        if (null === $route->getActionToken()) {
-            throw new \ConfigurationException('Route must have defined an action token');
+        if (null === $route->getTarget()) {
+            throw new \ConfigurationException('Route must have defined a target');
         }
 
         if (0 === count($route->getMethods())) {
@@ -249,13 +270,13 @@ class RegExRouter implements Router
      * {@inheritDoc}
      * @throws \InvalidArgumentException
      */
-    public function createLink($actionToken, array $params = [])
+    public function createLink($target, array $params = [])
     {
-        if (empty($actionToken)) {
-            throw new \InvalidArgumentException('Please provide an actionToken, otherwise a link cannot be created!');
+        if (empty($target)) {
+            throw new \InvalidArgumentException('Please provide a target identifier, otherwise a link cannot be created!');
         }
 
-        // try to find path for given $actionToken
+        // try to find path for given $target
         $path = '';
         $pathRegEx = '';
         $matchers = [];
@@ -264,7 +285,7 @@ class RegExRouter implements Router
                 $pathRegEx = $routeDefinition['pathRegEx'];
                 $route = $routeDefinition['route'];
 
-                if ($actionToken === $route->getActionToken()) {
+                if ($target === $route->getTarget()) {
                     $path = $route->getPath();
                     $matchers = $route->getMatchers();
                     break 2;
@@ -272,10 +293,10 @@ class RegExRouter implements Router
             }
         }
 
-        // when no path for the given $actionToken can be found,
+        // when no path for the given $target can be found,
         // stop processing...
         if (empty($path)) {
-            throw new \InvalidArgumentException(sprintf('No route found to actionToken "%s"', $actionToken));
+            throw new \InvalidArgumentException(sprintf('No route found for target "%s"', $target));
         }
 
         // try to replace all params in the path
@@ -287,9 +308,9 @@ class RegExRouter implements Router
                 if (!$applicableMatcher->match($value)) {
                     throw new \InvalidArgumentException(
                         sprintf(
-                            'Could not create link to actionToken "%s": Value "%s" for param "%s" didn\'t match '.
+                            'Could not create link to target "%s": Value "%s" for param "%s" didn\'t match '.
                             'defined matcher of type "%s".',
-                            $actionToken,
+                            $target,
                             $value,
                             $name,
                             get_class($applicableMatcher)
@@ -317,8 +338,8 @@ class RegExRouter implements Router
         if (count($missingParams) > 0) {
             throw new \InvalidArgumentException(
                 sprintf(
-                    'Could not create link to actionToken "%s": Undefined value(s) for %s',
-                    $actionToken,
+                    'Could not create link to target "%s": Undefined value(s) for %s',
+                    $target,
                     implode(', ', $missingParams)
                 )
             );

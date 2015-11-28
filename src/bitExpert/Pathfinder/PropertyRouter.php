@@ -29,13 +29,17 @@ class PropertyRouter implements Router
      */
     protected $listener;
     /**
-     * @var string|null
+     * @var mixed|null
      */
-    protected $defaultActionToken;
+    protected $defaultTarget;
     /**
      * @var bool
      */
     protected $specialCharEncoding;
+    /**
+     * @var string
+     */
+    protected $targetRequestAttribute;
 
     /**
      * Creates a new {@link \bitExpert\Pathfinder\PropertyRouter}.
@@ -47,7 +51,8 @@ class PropertyRouter implements Router
         // completes the base url with a / if not set in configuration
         $this->baseURL = rtrim($baseURL, '/') . '/';
         $this->listener = 'action';
-        $this->defaultActionToken = null;
+        $this->defaultTarget = null;
+        $this->targetRequestAttribute = self::DEFAULT_TARGET_REQUEST_ATTRIBUTE;
         $this->specialCharEncoding = false;
     }
 
@@ -65,9 +70,17 @@ class PropertyRouter implements Router
     /**
      * {@inheritDoc}
      */
-    public function setDefaultActionToken($defaultActionToken)
+    public function setDefaultTarget($defaultTarget)
     {
-        $this->defaultActionToken = $defaultActionToken;
+        $this->defaultTarget = $defaultTarget;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getTargetRequestAttribute()
+    {
+        return $this->targetRequestAttribute;
     }
 
     /**
@@ -83,28 +96,28 @@ class PropertyRouter implements Router
     /**
      * {@inheritDoc}
      */
-    public function resolveActionToken(ServerRequestInterface $request)
+    public function resolveTarget(ServerRequestInterface $request)
     {
         $queryParams = $request->getQueryParams();
-        $actionToken = isset($queryParams[$this->listener]) ? $queryParams[$this->listener] : null;
-        if (null === $actionToken) {
-            $actionToken = $this->defaultActionToken;
+        $target = isset($queryParams[$this->listener]) ? $queryParams[$this->listener] : null;
+        if (null === $target) {
+            $target = $this->defaultTarget;
         }
 
-        return $request->withAttribute(self::ACTIONTOKEN_ATTR, $actionToken);
+        return $request->withAttribute($this->getTargetRequestAttribute(), $target);
     }
 
     /**
      * {@inheritDoc}
      * @throws \InvalidArgumentException
      */
-    public function createLink($actionToken, array $params = [])
+    public function createLink($target, array $params = [])
     {
-        if (empty($actionToken)) {
-            throw new \InvalidArgumentException('Please provide an Actiontoken, otherwise a link cannot be build!');
+        if (empty($target)) {
+            throw new \InvalidArgumentException('Please provide a target, otherwise a link cannot be build!');
         }
 
-        $action = $this->listener . '=' . $actionToken;
+        $action = $this->listener . '=' . $target;
         $params = '&' . http_build_query($params, '', '&');
         $params = ($this->specialCharEncoding) ? htmlspecialchars($params) : $params;
         return $this->baseURL . '?' . $action . $params;

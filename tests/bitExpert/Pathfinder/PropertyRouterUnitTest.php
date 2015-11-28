@@ -47,50 +47,50 @@ class PropertyRouterUnitTest extends \PHPUnit_Framework_TestCase
     {
         $this->request = $this->request->withQueryParams(['action' => 'sample.action']);
 
-        $this->request = $this->router->resolveActionToken($this->request);
+        $this->request = $this->router->resolveTarget($this->request);
 
-        $this->assertSame('sample.action', $this->request->getAttribute(Router::ACTIONTOKEN_ATTR));
+        $this->assertSame('sample.action', $this->request->getAttribute($this->router->getTargetRequestAttribute()));
     }
 
     /**
      * @test
      */
-    public function changingListenerVariableWillBeRespectedWhenDeterminingActionToken()
+    public function changingListenerVariableWillBeRespectedWhenDeterminingTarget()
     {
         $this->request = $this->request->withQueryParams(['mylistener' => 'sample.action']);
 
         $this->router->setListener('mylistener');
-        $this->request = $this->router->resolveActionToken($this->request);
+        $this->request = $this->router->resolveTarget($this->request);
 
-        $this->assertSame('sample.action', $this->request->getAttribute(Router::ACTIONTOKEN_ATTR));
+        $this->assertSame('sample.action', $this->request->getAttribute($this->router->getTargetRequestAttribute()));
     }
 
     /**
      * @test
      */
-    public function missingListenerInRequestWillReturnDefaultActionToken()
+    public function missingListenerInRequestWillReturnDefaultTarget()
     {
-        $this->router->setDefaultActionToken('default.actionToken');
-        $this->request = $this->router->resolveActionToken($this->request);
+        $this->router->setDefaultTarget('default.actionToken');
+        $this->request = $this->router->resolveTarget($this->request);
 
-        $this->assertSame('default.actionToken', $this->request->getAttribute(Router::ACTIONTOKEN_ATTR));
+        $this->assertSame('default.actionToken', $this->request->getAttribute($this->router->getTargetRequestAttribute()));
     }
 
     /**
      * @test
      */
-    public function missingListenerAndMissingDefaultActionTokenWillReturnNull()
+    public function missingListenerAndMissingDefaultTargetWillReturnNull()
     {
-        $this->request = $this->router->resolveActionToken($this->request);
+        $this->request = $this->router->resolveTarget($this->request);
 
-        $this->assertNull($this->request->getAttribute(Router::ACTIONTOKEN_ATTR));
+        $this->assertNull($this->request->getAttribute($this->router->getTargetRequestAttribute()));
     }
 
     /**
      * @test
      * @expectedException \InvalidArgumentException
      */
-    public function callingCreateLinkWithoutActionTokenWillThrowException()
+    public function callingCreateLinkWithoutTargetWillThrowException()
     {
         $this->router->createLink('');
     }

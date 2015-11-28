@@ -19,40 +19,42 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 interface Router
 {
-    /**
-     * The name of the attribute used to store the actionToken in the Request.
-     *
-     * @var string
-     */
-    const ACTIONTOKEN_ATTR = 'Pathfinder.actionToken';
+    const DEFAULT_TARGET_REQUEST_ATTRIBUTE = 'Pathfinder.target';
 
     /**
-     * Sets the default action token. It is used to retrieve an action, if
-     * no action token can be found in the request.
+     * Returns the currently configured name of the attribute to store the target inside the request
      *
-     * @param string $defaultActionToken
+     * @return string
      */
-    public function setDefaultActionToken($defaultActionToken);
+    public function getTargetRequestAttribute();
 
     /**
-     * Extracts the current action token from the request. Will return null
-     * in case no action token could be found and no default action token
+     * Sets the default target. It is used to retrieve a target, if
+     * no route can be resolved to a target.
+     *
+     * @param mixed $defaultTarget
+     */
+    public function setDefaultTarget($defaultTarget);
+
+    /**
+     * Resolves the target using the configured routes. Will return null
+     * in case no target could be found and no default target
      * was provided.
      *
      * @param ServerRequestInterface $request
      * @return ServerRequestInterface
      */
-    public function resolveActionToken(ServerRequestInterface $request);
+    public function resolveTarget(ServerRequestInterface $request);
 
     /**
-     * Creates a link to an action identified by the given action token. In
+     * Creates a link to a target identified by the given target identifier. In
      * case building the link is not possible null is returned. Will throw an
-     * \InvalidArgumentException when no $actionToken was passed.
+     * \InvalidArgumentException when no $targetIdentifier was passed.
      *
-     * @param string $actionToken
+     * @param mixed $targetIdentifier
      * @param array $params
      * @return string|null
      * @throws \InvalidArgumentException
      */
-    public function createLink($actionToken, array $params = []);
+    public function createLink($targetIdentifier, array $params = []);
 }

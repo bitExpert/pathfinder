@@ -28,7 +28,7 @@ class Route
     /**
      * @var string
      */
-    protected $actionToken;
+    protected $target;
     /**
      * @var Matcher[]
      */
@@ -39,12 +39,12 @@ class Route
      *
      * @param array|string $methods The HTTP methods the route is active (e.g. GET, POST, PUT, ...)
      * @param string|null $path
-     * @param string|null $actionToken
+     * @param mixed|null $target
      */
-    public function __construct($methods = [], $path = null, $actionToken = null, $matchers = [])
+    public function __construct($methods = [], $path = null, $target = null, $matchers = [])
     {
         $this->path = $path;
-        $this->actionToken = $actionToken;
+        $this->target = $target;
         $this->methods = is_array($methods) ? $methods : [$methods];
         $this->methods = array_map('self::normalizeMethod', $this->methods);
         $this->matchers = $matchers;
@@ -55,91 +55,91 @@ class Route
      *
      * @param array $methods
      * @param string|null $path
-     * @param string|null $actionToken
+     * @param mixed|null $target
      * @param array $matchers
      * @return static
      */
-    public static function create($methods = [], $path = null, $actionToken = null, $matchers = [])
+    public static function create($methods = [], $path = null, $target = null, $matchers = [])
     {
-        return new static($methods, $path, $actionToken, $matchers);
+        return new static($methods, $path, $target, $matchers);
     }
 
     /**
      * Creates a new GET accepting route
      *
      * @param string|null $path
-     * @param string|null $actionToken
+     * @param mixed|null $target
      * @param array $matchers
      * @return Route
      */
-    public static function get($path = null, $actionToken = null, $matchers = [])
+    public static function get($path = null, $target = null, $matchers = [])
     {
-        return self::create('GET', $path, $actionToken, $matchers);
+        return self::create('GET', $path, $target, $matchers);
     }
 
     /**
      * Creates a new POST accepting route
      *
      * @param string|null $path
-     * @param string|null $actionToken
+     * @param mixed|null $target
      * @param array $matchers
      * @return Route
      */
-    public static function post($path = null, $actionToken = null, $matchers = [])
+    public static function post($path = null, $target = null, $matchers = [])
     {
-        return self::create('POST', $path, $actionToken, $matchers);
+        return self::create('POST', $path, $target, $matchers);
     }
 
     /**
      * Creates a new PUT accepting route
      *
      * @param string|null $path
-     * @param string|null $actionToken
+     * @param mixed|null $target
      * @param array $matchers
      * @return Route
      */
-    public static function put($path = null, $actionToken = null, $matchers = [])
+    public static function put($path = null, $target = null, $matchers = [])
     {
-        return self::create('PUT', $path, $actionToken, $matchers);
+        return self::create('PUT', $path, $target, $matchers);
     }
 
     /**
      * Creates a new DELETE accepting route
      *
      * @param string|null $path
-     * @param string|null $actionToken
+     * @param mixed|null $target
      * @param array $matchers
      * @return Route
      */
-    public static function delete($path = null, $actionToken = null, $matchers = [])
+    public static function delete($path = null, $target = null, $matchers = [])
     {
-        return self::create('DELETE', $path, $actionToken, $matchers);
+        return self::create('DELETE', $path, $target, $matchers);
     }
 
     /**
      * Creates a new OPTIONS accepting route
      *
      * @param string|null $path
-     * @param string|null $actionToken
+     * @param mixed|null $target
      * @param array $matchers
      * @return Route
      */
-    public static function options($path = null, $actionToken = null, $matchers = [])
+    public static function options($path = null, $target = null, $matchers = [])
     {
-        return self::create('OPTIONS', $path, $actionToken, $matchers);
+        return self::create('OPTIONS', $path, $target, $matchers);
     }
 
     /**
      * Creates a new PATCH accepting route
      *
      * @param string|null $path
-     * @param string|null $actionToken
+     * @param mixed|null $target
      * @param array $matchers
      * @return Route
      */
-    public static function patch($path = null, $actionToken = null, $matchers = [])
+    public static function patch($path = null, $target = null, $matchers = [])
     {
-        return self::create('PATCH', $path, $actionToken, $matchers);
+        return self::create('PATCH', $path, $target, $matchers);
     }
 
     /**
@@ -243,15 +243,15 @@ class Route
     }
 
     /**
-     * Returns the route with a new action token
+     * Returns the route with a new target
      *
-     * @param string $actionToken The new action token
+     * @param mixed $target The new target
      * @return Route
      */
-    public function to($actionToken)
+    public function to($target)
     {
         $instance = clone($this);
-        $instance->actionToken = $actionToken;
+        $instance->target = $target;
         return $instance;
     }
 
@@ -266,13 +266,13 @@ class Route
     }
 
     /**
-     * Returns the actionToken which is associated with the route.
+     * Returns the target which is associated with the route.
      *
-     * @return string
+     * @return target
      */
-    public function getActionToken()
+    public function getTarget()
     {
-        return $this->actionToken;
+        return $this->target;
     }
 
     /**
