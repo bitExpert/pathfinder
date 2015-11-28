@@ -159,7 +159,7 @@ abstract class AbstractRouter implements RouterInterface
 
             if ($route instanceof Route) {
                 $this->validateRoute($route);
-                // convert the given route path into the regex needed
+                // get the specificly formatted identifier for this route
                 $identifier = $this->getRouteIdentifier($route);
 
                 $methods = $route->getMethods();
