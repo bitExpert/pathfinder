@@ -24,7 +24,7 @@ class Route
     /**
      * @var string
      */
-    protected $path;
+    protected $source;
     /**
      * @var string
      */
@@ -38,12 +38,12 @@ class Route
      * Creates a new {@link \bitExpert\Pathfinder\Route}.
      *
      * @param array|string $methods The HTTP methods the route is active (e.g. GET, POST, PUT, ...)
-     * @param string|null $path
+     * @param string|null $source
      * @param mixed|null $target
      */
-    public function __construct($methods = [], $path = null, $target = null, $matchers = [])
+    public function __construct($methods = [], $source = null, $target = null, $matchers = [])
     {
-        $this->path = $path;
+        $this->source = $source;
         $this->target = $target;
         $this->methods = is_array($methods) ? $methods : [$methods];
         $this->methods = array_map('self::normalizeMethod', $this->methods);
@@ -54,92 +54,92 @@ class Route
      * Creates a new route instance
      *
      * @param array $methods
-     * @param string|null $path
+     * @param string|null $source
      * @param mixed|null $target
      * @param array $matchers
      * @return static
      */
-    public static function create($methods = [], $path = null, $target = null, $matchers = [])
+    public static function create($methods = [], $source = null, $target = null, $matchers = [])
     {
-        return new static($methods, $path, $target, $matchers);
+        return new static($methods, $source, $target, $matchers);
     }
 
     /**
      * Creates a new GET accepting route
      *
-     * @param string|null $path
+     * @param string|null $source
      * @param mixed|null $target
      * @param array $matchers
      * @return Route
      */
-    public static function get($path = null, $target = null, $matchers = [])
+    public static function get($source = null, $target = null, $matchers = [])
     {
-        return self::create('GET', $path, $target, $matchers);
+        return self::create('GET', $source, $target, $matchers);
     }
 
     /**
      * Creates a new POST accepting route
      *
-     * @param string|null $path
+     * @param string|null $source
      * @param mixed|null $target
      * @param array $matchers
      * @return Route
      */
-    public static function post($path = null, $target = null, $matchers = [])
+    public static function post($source = null, $target = null, $matchers = [])
     {
-        return self::create('POST', $path, $target, $matchers);
+        return self::create('POST', $source, $target, $matchers);
     }
 
     /**
      * Creates a new PUT accepting route
      *
-     * @param string|null $path
+     * @param string|null $source
      * @param mixed|null $target
      * @param array $matchers
      * @return Route
      */
-    public static function put($path = null, $target = null, $matchers = [])
+    public static function put($source = null, $target = null, $matchers = [])
     {
-        return self::create('PUT', $path, $target, $matchers);
+        return self::create('PUT', $source, $target, $matchers);
     }
 
     /**
      * Creates a new DELETE accepting route
      *
-     * @param string|null $path
+     * @param string|null $source
      * @param mixed|null $target
      * @param array $matchers
      * @return Route
      */
-    public static function delete($path = null, $target = null, $matchers = [])
+    public static function delete($source = null, $target = null, $matchers = [])
     {
-        return self::create('DELETE', $path, $target, $matchers);
+        return self::create('DELETE', $source, $target, $matchers);
     }
 
     /**
      * Creates a new OPTIONS accepting route
      *
-     * @param string|null $path
+     * @param string|null $source
      * @param mixed|null $target
      * @param array $matchers
      * @return Route
      */
-    public static function options($path = null, $target = null, $matchers = [])
+    public static function options($source = null, $target = null, $matchers = [])
     {
-        return self::create('OPTIONS', $path, $target, $matchers);
+        return self::create('OPTIONS', $source, $target, $matchers);
     }
 
     /**
      * Creates a new PATCH accepting route
      *
-     * @param string|null $path
+     * @param string|null $source
      * @param mixed|null $target
      * @param array $matchers
      * @return Route
      */
-    public static function patch($path = null, $target = null, $matchers = [])
+    public static function patch($source = null, $target = null, $matchers = [])
     {
-        return self::create('PATCH', $path, $target, $matchers);
+        return self::create('PATCH', $source, $target, $matchers);
     }
 
     /**
@@ -230,15 +230,15 @@ class Route
     }
 
     /**
-     * Returns the route with a new path configuration
+     * Returns the route with a new source configuration
      *
-     * @param string $path The new path
+     * @param string $source The new source
      * @return Route
      */
-    public function from($path)
+    public function from($source)
     {
         $instance = clone($this);
-        $instance->path = $path;
+        $instance->source = $source;
         return $instance;
     }
 
@@ -256,13 +256,13 @@ class Route
     }
 
     /**
-     * Returns the path of the route.
+     * Returns the source of the route.
      *
      * @return string
      */
-    public function getPath()
+    public function getSource()
     {
-        return $this->path;
+        return $this->source;
     }
 
     /**

@@ -17,9 +17,16 @@ use Psr\Http\Message\ServerRequestInterface;
  *
  * @api
  */
-interface Router
+interface RouterInterface
 {
     const DEFAULT_TARGET_REQUEST_ATTRIBUTE = 'Pathfinder.target';
+
+    /**
+     * Sets the routes for the router
+     *
+     * @param array $routes
+     */
+    public function setRoutes(array $routes);
 
     /**
      * Returns the currently configured name of the attribute to store the target inside the request
@@ -44,17 +51,17 @@ interface Router
      * @param ServerRequestInterface $request
      * @return ServerRequestInterface
      */
-    public function resolveTarget(ServerRequestInterface $request);
+    public function match(ServerRequestInterface $request);
 
     /**
      * Creates a link to a target identified by the given target identifier. In
      * case building the link is not possible null is returned. Will throw an
      * \InvalidArgumentException when no $targetIdentifier was passed.
      *
-     * @param mixed $targetIdentifier
+     * @param mixed $target
      * @param array $params
      * @return string|null
      * @throws \InvalidArgumentException
      */
-    public function createLink($targetIdentifier, array $params = []);
+    public function generateUri($target, array $params = []);
 }

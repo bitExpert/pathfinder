@@ -15,14 +15,14 @@ use Zend\Diactoros\ServerRequest;
 use bitExpert\Pathfinder\Matcher\Matcher;
 
 /**
- * Unit test for {@link \bitExpert\Pathfinder\RegexRouter}.
+ * Unit test for {@link \bitExpert\Pathfinder\PathRouter}.
  *
- * @covers \bitExpert\Pathfinder\RegexRouter
+ * @covers \bitExpert\Pathfinder\PathRouter
  */
-class RegExRouterUnitTest extends \PHPUnit_Framework_TestCase
+class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var RegexRouter
+     * @var PathRouter
      */
     protected $router;
     /**
@@ -50,7 +50,7 @@ class RegExRouterUnitTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(true));
 
         $this->request = new ServerRequest();
-        $this->router = new RegExRouter('http://localhost');
+        $this->router = new Psr7Router('http://localhost');
         $this->router->setRoutes(
             [
                 Route::get('/users')->to('my.GetActionToken'),
@@ -73,9 +73,10 @@ class RegExRouterUnitTest extends \PHPUnit_Framework_TestCase
     public function noMatchingMethodWillReturnNullWhenNoDefaultTargetWasSet()
     {
         $this->request = new ServerRequest([], [], '/users', 'HEAD');
-        $this->request = $this->router->resolveTarget($this->request);
+        $this->request = $this->router->match($this->request);
+        $targetRequestAttribute = $this->router->getTargetRequestAttribute();
 
-        $this->assertNull($this->request->getAttribute($this->router->getTargetRequestAttribute()));
+        $this->assertNull($this->request->getAttribute($targetRequestAttribute));
     }
 
     /**
@@ -86,9 +87,10 @@ class RegExRouterUnitTest extends \PHPUnit_Framework_TestCase
         $this->request = new ServerRequest([], [], '/users', 'HEAD');
 
         $this->router->setDefaultTarget('default.target');
-        $this->request = $this->router->resolveTarget($this->request);
+        $this->request = $this->router->match($this->request);
+        $targetRequestAttribute = $this->router->getTargetRequestAttribute();
 
-        $this->assertSame('default.target', $this->request->getAttribute($this->router->getTargetRequestAttribute()));
+        $this->assertSame('default.target', $this->request->getAttribute($targetRequestAttribute));
     }
 
     /**
@@ -97,9 +99,10 @@ class RegExRouterUnitTest extends \PHPUnit_Framework_TestCase
     public function noMatchingRouteWillReturnDefaultTarget()
     {
         $this->router->setDefaultTarget('default.target');
-        $this->request = $this->router->resolveTarget($this->request);
+        $this->request = $this->router->match($this->request);
+        $targetRequestAttribute = $this->router->getTargetRequestAttribute();
 
-        $this->assertSame('default.target', $this->request->getAttribute($this->router->getTargetRequestAttribute()));
+        $this->assertSame('default.target', $this->request->getAttribute($targetRequestAttribute));
     }
 
     /**
@@ -107,9 +110,9 @@ class RegExRouterUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function noMatchingRouteWillReturnNullWhenNoDefaultTargetWasSet()
     {
-        $this->request = $this->router->resolveTarget($this->request);
-
-        $this->assertNull($this->request->getAttribute($this->router->getTargetRequestAttribute()));
+        $this->request = $this->router->match($this->request);
+        $targetRequestAttribute = $this->router->getTargetRequestAttribute();
+        $this->assertNull($this->request->getAttribute($targetRequestAttribute));
     }
 
     /**
@@ -118,9 +121,9 @@ class RegExRouterUnitTest extends \PHPUnit_Framework_TestCase
     public function queryStringWillBeIgnoredWhenMatchingRoute()
     {
         $this->request = new ServerRequest([], [], '/users?sessid=ABDC', 'GET');
-        $this->request = $this->router->resolveTarget($this->request);
-
-        $this->assertSame('my.GetActionToken', $this->request->getAttribute($this->router->getTargetRequestAttribute()));
+        $this->request = $this->router->match($this->request);
+        $targetRequestAttribute = $this->router->getTargetRequestAttribute();
+        $this->assertSame('my.GetActionToken', $this->request->getAttribute($targetRequestAttribute));
     }
 
     /**
@@ -129,9 +132,9 @@ class RegExRouterUnitTest extends \PHPUnit_Framework_TestCase
     public function matchingRouteWithoutParamsReturnsTarget()
     {
         $this->request = new ServerRequest([], [], '/users', 'GET');
-        $this->request = $this->router->resolveTarget($this->request);
-
-        $this->assertSame('my.GetActionToken', $this->request->getAttribute($this->router->getTargetRequestAttribute()));
+        $this->request = $this->router->match($this->request);
+        $targetRequestAttribute = $this->router->getTargetRequestAttribute();
+        $this->assertSame('my.GetActionToken', $this->request->getAttribute($targetRequestAttribute));
     }
 
     /**
@@ -140,10 +143,12 @@ class RegExRouterUnitTest extends \PHPUnit_Framework_TestCase
     public function matchingRouteWithParamsReturnsTargetAndSetsParamsInRequest()
     {
         $this->request = new ServerRequest([], [], '/user/123', 'GET');
-        $this->request = $this->router->resolveTarget($this->request);
+        $this->request = $this->router->match($this->request);
+        $targetRequestAttribute = $this->router->getTargetRequestAttribute();
+
         $queryParams = $this->request->getQueryParams();
 
-        $this->assertSame('my.GetActionTokenWithParam', $this->request->getAttribute($this->router->getTargetRequestAttribute()));
+        $this->assertSame('my.GetActionTokenWithParam', $this->request->getAttribute($targetRequestAttribute));
         $this->assertTrue(isset($queryParams['userId']));
         $this->assertSame('123', $queryParams['userId']);
     }
@@ -154,8 +159,9 @@ class RegExRouterUnitTest extends \PHPUnit_Framework_TestCase
     public function doesNotUseRouteIfMatcherDoesNotMatch()
     {
         $this->request = new ServerRequest([], [], '/company/abc', 'GET');
-        $this->request = $this->router->resolveTarget($this->request);
-        $this->assertNull($this->request->getAttribute($this->router->getTargetRequestAttribute()));
+        $this->request = $this->router->match($this->request);
+        $targetRequestAttribute = $this->router->getTargetRequestAttribute();
+        $this->assertNull($this->request->getAttribute($targetRequestAttribute));
     }
 
     /**
@@ -164,8 +170,9 @@ class RegExRouterUnitTest extends \PHPUnit_Framework_TestCase
     public function usesRouteIfMatcherDoesMatch()
     {
         $this->request = new ServerRequest([], [], '/offer/123', 'GET');
-        $this->request = $this->router->resolveTarget($this->request);
-        $this->assertEquals('my.GetActionTokenWithMatchedParam', $this->request->getAttribute($this->router->getTargetRequestAttribute()));
+        $this->request = $this->router->match($this->request);
+        $targetRequestAttribute = $this->router->getTargetRequestAttribute();
+        $this->assertEquals('my.GetActionTokenWithMatchedParam', $this->request->getAttribute($targetRequestAttribute));
     }
 
     /**
@@ -173,23 +180,23 @@ class RegExRouterUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function passingRegexRouterAsConfig()
     {
-        $router = new RegexRouter('http://localhost');
+        $router = new Psr7Router('http://localhost');
         $router->setRoutes([new Route('GET', '/admin', 'my.AdminActionToken')]);
 
         $this->request = new ServerRequest([], [], '/admin', 'GET');
         $this->router->setRoutes([$router]);
-        $this->request = $this->router->resolveTarget($this->request);
-
-        $this->assertSame('my.AdminActionToken', $this->request->getAttribute($this->router->getTargetRequestAttribute()));
+        $this->request = $this->router->match($this->request);
+        $targetRequestAttribute = $this->router->getTargetRequestAttribute();
+        $this->assertSame('my.AdminActionToken', $this->request->getAttribute($targetRequestAttribute));
     }
 
     /**
      * @test
      * @expectedException \InvalidArgumentException
      */
-    public function callingCreateLinkWithoutTargetWillThrowException()
+    public function callingGenerateUriWithoutTargetWillThrowException()
     {
-        $this->router->createLink('');
+        $this->router->generateUri('');
     }
 
     /**
@@ -198,7 +205,7 @@ class RegExRouterUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function throwsAnExceptionWhenRouteToTargetCouldNotBeFound()
     {
-        $this->router->createLink('nonexistent.actionToken');
+        $this->router->generateUri('nonexistent.actionToken');
     }
 
     /**
@@ -206,7 +213,7 @@ class RegExRouterUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function returnsTargetWhenMatchingRouteIsFound()
     {
-        $url = $this->router->createLink('my.GetActionToken');
+        $url = $this->router->generateUri('my.GetActionToken');
 
         $this->assertSame('/users', $url);
     }
@@ -216,7 +223,7 @@ class RegExRouterUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function paramsAreIgnoredForRoutesWithoutAnyParams()
     {
-        $url = $this->router->createLink('my.GetActionToken', ['sampleId' => 456]);
+        $url = $this->router->generateUri('my.GetActionToken', ['sampleId' => 456]);
 
         $this->assertSame('/users', $url);
     }
@@ -226,7 +233,7 @@ class RegExRouterUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function routeParamPlaceholdersWillBeReplaced()
     {
-        $url = $this->router->createLink('my.GetActionTokenWithParam', ['userId' => 123]);
+        $url = $this->router->generateUri('my.GetActionTokenWithParam', ['userId' => 123]);
 
         $this->assertSame('/user/123', $url);
     }
@@ -236,7 +243,7 @@ class RegExRouterUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function paramsNotFoundInRouteWillBeIgnoredWhenLinkIsAssembled()
     {
-        $url = $this->router->createLink('my.GetActionTokenWithParam', ['userId' => 123, 'sampleId' => 123]);
+        $url = $this->router->generateUri('my.GetActionTokenWithParam', ['userId' => 123, 'sampleId' => 123]);
 
         $this->assertSame('/user/123', $url);
     }
@@ -247,7 +254,7 @@ class RegExRouterUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function willThrowAnExceptionWhenNotAllParamReplacementsAreProvided()
     {
-        $this->router->createLink('my.GetActionTokenWithParam', ['sampleId' => 123]);
+        $this->router->generateUri('my.GetActionTokenWithParam', ['sampleId' => 123]);
     }
 
     /**
@@ -256,6 +263,6 @@ class RegExRouterUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function willThrowAnExceptionWhenProvidingNotMatchingParams()
     {
-        $this->router->createLink('my.GetActionTokenWithUnmatchedParam', ['companyId' => 'abc']);
+        $this->router->generateUri('my.GetActionTokenWithUnmatchedParam', ['companyId' => 'abc']);
     }
 }

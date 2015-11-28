@@ -57,5 +57,4 @@ class NumericMatcherUnitTest extends \PHPUnit_Framework_TestCase
         $result = $this->matcher->match('1234a567');
         $this->assertFalse($result);
     }
-
 }

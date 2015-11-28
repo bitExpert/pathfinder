@@ -9,6 +9,7 @@
  * file that was distributed with this source code.
  */
 namespace bitExpert\Pathfinder;
+
 use bitExpert\Pathfinder\Matcher\Matcher;
 
 /**
@@ -51,28 +52,28 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function pathSetByConstructorGetsReturnedAsIs()
+    public function sourceSetByConstructorGetsReturnedAsIs()
     {
         $route = new Route('GET', '/info');
-        $this->assertSame('/info', $route->getPath());
+        $this->assertSame('/info', $route->getSource());
     }
 
     /**
      * @test
      */
-    public function pathSetByFunctionGetsReturnedAsIs()
+    public function sourceSetByFunctionGetsReturnedAsIs()
     {
         $route = Route::create()->from('/info');
-        $this->assertSame('/info', $route->getPath());
+        $this->assertSame('/info', $route->getSource());
     }
 
     /**
      * @test
      */
-    public function pathSetByFactoryGetsReturnedAsIs()
+    public function sourceSetByFactoryGetsReturnedAsIs()
     {
         $route = Route::create('GET', '/info');
-        $this->assertSame('/info', $route->getPath());
+        $this->assertSame('/info', $route->getSource());
     }
 
     /**
@@ -105,13 +106,13 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function settingPathIsImmutable()
+    public function settingSourceIsImmutable()
     {
         $route = Route::create();
         $route2 = $route->from('/test');
 
         $this->assertInstanceOf(Route::class, $route2);
-        $this->assertNotEquals($route->getPath(), $route2->getPath());
+        $this->assertNotEquals($route->getSource(), $route2->getSource());
     }
 
     /**
