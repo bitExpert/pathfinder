@@ -22,6 +22,13 @@ interface Router
     const DEFAULT_TARGET_REQUEST_ATTRIBUTE = 'Pathfinder.target';
 
     /**
+     * Adds a route to the routes collection
+     *
+     * @param Route $route
+     */
+    public function addRoute(Route $route);
+
+    /**
      * Sets the routes for the router
      *
      * @param array $routes

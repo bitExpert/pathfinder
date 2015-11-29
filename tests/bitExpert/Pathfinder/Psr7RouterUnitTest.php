@@ -177,26 +177,60 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     */
-    public function passingRegexRouterAsConfig()
-    {
-        $router = new Psr7Router('http://localhost');
-        $router->setRoutes([new Route('GET', '/admin', 'my.AdminActionToken')]);
-
-        $this->request = new ServerRequest([], [], '/admin', 'GET');
-        $this->router->setRoutes([$router]);
-        $this->request = $this->router->match($this->request);
-        $targetRequestAttribute = $this->router->getTargetRequestAttribute();
-        $this->assertSame('my.AdminActionToken', $this->request->getAttribute($targetRequestAttribute));
-    }
-
-    /**
-     * @test
      * @expectedException \InvalidArgumentException
      */
     public function callingGenerateUriWithoutTargetWillThrowException()
     {
         $this->router->generateUri('');
+    }
+
+    /**
+     * @test
+     * @expectedException \ConfigurationException
+     */
+    public function throwsAnExceptionIfAddedRouteHasNoMethodDefined()
+    {
+        $this->router->addRoute(Route::create()->to('someaction'));
+    }
+
+    /**
+     * @test
+     * @expectedException \ConfigurationException
+     */
+    public function throwsAnExceptionIfPathOfAddedRouteIsMissing()
+    {
+        $this->router->addRoute(Route::get()->to('someaction'));
+    }
+
+    /**
+     * @test
+     * @expectedException \ConfigurationException
+     */
+    public function throwsAnExceptionIfTargetOfAddedRouteIsMissing()
+    {
+        $this->router->addRoute(Route::get('/something'));
+    }
+
+    /**
+     * @test
+     */
+    public function addsRouteCorrectlyIfValid()
+    {
+        $this->router->addRoute(Route::get('/something')->to('someaction'));
+        $this->request = new ServerRequest([], [], '/something', 'GET');
+
+        $this->request = $this->router->match($this->request);
+        $targetRequestAttribute = $this->router->getTargetRequestAttribute();
+        $this->assertEquals('someaction', $this->request->getAttribute($targetRequestAttribute));
+    }
+
+    /**
+     * @test
+     * @expectedException \ConfigurationException
+     */
+    public function throwsAnExceptionIfTargetIsCallableAndAddedRouteHasNoNameDefined()
+    {
+        $this->router->addRoute(Route::get('/something')->to(function () {}));
     }
 
     /**

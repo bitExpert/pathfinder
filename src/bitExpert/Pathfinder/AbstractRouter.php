@@ -145,42 +145,38 @@ abstract class AbstractRouter implements Router
     }
 
     /**
+     * {@inheritDocs}
+     */
+    public function addRoute(Route $route)
+    {
+        $this->validateRoute($route);
+        // get the specific path matcher for this route
+        $pathMatcher = $this->getPathMatcherForRoute($route);
+
+        $methods = $route->getMethods();
+
+        foreach ($methods as $method) {
+            if (!isset($this->routes[$method])) {
+                $this->routes[$method] = [];
+            }
+
+            $this->routes[$method][] = [
+                'pathMatcher' => $pathMatcher,
+                'route' => $route
+            ];
+        }
+    }
+
+    /**
      * Sets the routes.
      *
      * @param array $routes
      */
     public function setRoutes(array $routes)
     {
+        $this->routes = [];
         foreach ($routes as $route) {
-            if ($route instanceof static) {
-                //@TODO: Concatenate paths in this case
-                $this->routes = array_merge($this->routes, $route->routes);
-                continue;
-            }
-
-            if ($route instanceof Route) {
-                $this->validateRoute($route);
-                // get the specific path matcher for this route
-                $pathMatcher = $this->getPathMatcherForRoute($route);
-
-                $methods = $route->getMethods();
-
-                foreach ($methods as $method) {
-                    if (!isset($this->routes[$method])) {
-                        $this->routes[$method] = [];
-                    }
-
-                    $this->routes[$method][] = [
-                        'pathMatcher' => $pathMatcher,
-                        'route' => $route
-                    ];
-                }
-            } else {
-                throw new \InvalidArgumentException(sprintf(
-                    'Given route is not an instance of %s',
-                    Route::class
-                ));
-            }
+            $this->addRoute($route);
         }
     }
 
