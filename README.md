@@ -5,10 +5,8 @@ A PHP routing component
 Router
 ------
 
-The router is responsible for resolving the actionToken from the given route as well building an url for a given 
-actionToken (and it`s parameters). The router comes in two flavours, once as a simple PropertyRouter 
-(\bitExpert\Adroit\Router\PropertyRouter) which will look up the actionToken based on an url parameter or the RegexRouter
-(\bitExpert\Adroit\Router\RegexRouter) which will map the whole url to an actionToken.
+The router is responsible for resolving the target from the given route as well building an uri for a given 
+route identifier (and it`s parameters). Using the Psr7Router (\bitExpert\Pathfinder\Psr7Router) is pretty easy:
 
 ```php
 $baseUrl = 'http://myapp.loc:8080';
@@ -24,7 +22,7 @@ $router->setRoutes(
 
 Routes
 ------
-Routes in Adroit are implemented immutual. You may define your routes in several styles:
+Routes in Pathfinder are implemented immutual. You may define your routes in several styles:
 
 ```php
 new Route('GET', '/', 'index');
@@ -33,7 +31,7 @@ Route::get('/')->to('index');
 Route::create()->from('/')->to('index')->accepting('GET');
 Route::get('/pathtofunctarget')->to(function () {
     // callable target contents
-})->named('mycallableroute');
+})->named('routewithcallabletarget');
 ```
 
 You may also mix all the styles above, just as you like, since every method returns a new instance of route.
