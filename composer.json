@@ -2,6 +2,7 @@
   "name": "bitexpert/pathfinder",
   "description": "PSR-7 compatible routing component",
   "minimum-stability": "stable",
+  "version": "0.1.0",
   "license": "Apache-2.0",
   "authors": [
     {
