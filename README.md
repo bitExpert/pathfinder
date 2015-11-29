@@ -1,6 +1,5 @@
-# pathfinder
-A PHP routing component
-
+# bitexpert/pathfinder
+A PHP routing component.
 
 Router
 ------
@@ -44,3 +43,7 @@ Matchers are used to ensure that your route params match given criteria such as 
 Route::get('/user/[:id]')->to('users')->ifMatches('id', new NumericMatcher());
 ```
 
+License
+-------
+
+Pathfinder is released under the Apache 2.0 license.
