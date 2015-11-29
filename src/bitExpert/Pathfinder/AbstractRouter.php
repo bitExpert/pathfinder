@@ -12,7 +12,7 @@ namespace bitExpert\Pathfinder;
 use bitExpert\Slf4PsrLog\LoggerFactory;
 use Psr\Http\Message\ServerRequestInterface;
 
-abstract class AbstractRouter implements RouterInterface
+abstract class AbstractRouter implements Router
 {
     /**
      * @var \Psr\Log\LoggerInterface the logger instance.
@@ -118,7 +118,7 @@ abstract class AbstractRouter implements RouterInterface
      */
     protected function validateParams(Route $route, array $params, array $requiredParams)
     {
-        $target = $route->getTarget();
+        $identifier = $this->getRouteIdentifier($route);
         $givenParams = array_keys($params);
 
         $missingParams = array_diff($requiredParams, $givenParams);
@@ -127,7 +127,7 @@ abstract class AbstractRouter implements RouterInterface
             throw new \InvalidArgumentException(
                 sprintf(
                     'Error while validating params "%s": Required parameters "%s" are missing',
-                    $target,
+                    $identifier,
                     implode(', ', $missingParams)
                 )
             );
@@ -137,7 +137,7 @@ abstract class AbstractRouter implements RouterInterface
             throw new \InvalidArgumentException(
                 sprintf(
                     'Error while validing params for target "%s": Params don\'t fulfill their matcher\'s criteria',
-                    $target
+                    $identifier
                 )
             );
         }
@@ -159,8 +159,8 @@ abstract class AbstractRouter implements RouterInterface
 
             if ($route instanceof Route) {
                 $this->validateRoute($route);
-                // get the specificly formatted identifier for this route
-                $identifier = $this->getRouteIdentifier($route);
+                // get the specific path matcher for this route
+                $pathMatcher = $this->getPathMatcherForRoute($route);
 
                 $methods = $route->getMethods();
 
@@ -170,7 +170,7 @@ abstract class AbstractRouter implements RouterInterface
                     }
 
                     $this->routes[$method][] = [
-                        'identifier' => $identifier,
+                        'pathMatcher' => $pathMatcher,
                         'route' => $route
                     ];
                 }
@@ -193,8 +193,8 @@ abstract class AbstractRouter implements RouterInterface
      */
     protected function validateRoute(Route $route)
     {
-        if (null === $route->getSource()) {
-            throw new \ConfigurationException('Route must have defined a source');
+        if (null === $route->getPath()) {
+            throw new \ConfigurationException('Route must have defined a path');
         }
 
         if (null === $route->getTarget()) {
@@ -205,7 +205,22 @@ abstract class AbstractRouter implements RouterInterface
             throw new \ConfigurationException('Route must at least accept one request method');
         }
 
+        if (!is_string($route->getTarget()) and (null === $route->getName())) {
+            throw new \ConfigurationException('If defined route target is not a string a name has to be set');
+        }
+
         return true;
+    }
+
+    /**
+     * Returns the identifier string for given route
+     *
+     * @param Route $route
+     * @return target|string
+     */
+    protected function getRouteIdentifier(Route $route)
+    {
+        return empty($route->getName()) ? $route->getTarget() : $route->getName();
     }
 
     /**
@@ -214,5 +229,5 @@ abstract class AbstractRouter implements RouterInterface
      * @param Route $route
      * @return mixed
      */
-    abstract protected function getRouteIdentifier(Route $route);
+    abstract protected function getPathMatcherForRoute(Route $route);
 }

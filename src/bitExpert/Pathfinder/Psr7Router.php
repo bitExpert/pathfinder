@@ -51,10 +51,12 @@ class Psr7Router extends AbstractRouter
 
         foreach ($this->routes[$request->getMethod()] as $routeDefinition) {
             $route = $routeDefinition['route'];
-            $this->logger->debug(sprintf('Trying to match requested path to route "%s"', $route->getSource()));
+            $identifier = $this->getRouteIdentifier($route);
+
+            $this->logger->debug(sprintf('Trying to match requested path to route "%s"', $identifier));
 
             $urlVars = [];
-            if (preg_match_all($routeDefinition['identifier'], $requestPath, $urlVars)) {
+            if (preg_match_all($routeDefinition['pathMatcher'], $requestPath, $urlVars)) {
                 // remove all elements which should not be set in the request,
                 // e.g. the matching url string as well as all numeric items
                 $params = $this->mapParams($urlVars);
@@ -63,11 +65,11 @@ class Psr7Router extends AbstractRouter
                 if ($this->matchParams($route, $params)) {
                     // setting route params as query params
                     $request = $request->withQueryParams($params);
-
+                    $identifier = $this->getRouteIdentifier($route);
                     $this->logger->debug(
                         sprintf(
-                            'Matching route found. Setting target to "%s"',
-                            $route->getTarget()
+                            'Route "%s" matches. Applying its target...',
+                            $identifier
                         )
                     );
 
@@ -76,12 +78,7 @@ class Psr7Router extends AbstractRouter
             }
         }
 
-        $this->logger->debug(
-            sprintf(
-                'No matching route found. Setting default target "%s"',
-                $this->defaultTarget
-            )
-        );
+        $this->logger->debug('No matching route found. Applying default target.');
 
         return $request->withAttribute($this->getTargetRequestAttribute(), $this->defaultTarget);
     }
@@ -90,11 +87,11 @@ class Psr7Router extends AbstractRouter
      * {@inheritDoc}
      * @throws \InvalidArgumentException
      */
-    public function generateUri($target, array $params = [])
+    public function generateUri($routeIdentifier, array $params = [])
     {
-        if (empty($target)) {
+        if (empty($routeIdentifier)) {
             throw new \InvalidArgumentException(
-                'Please provide a target identifier, otherwise a link cannot be created!'
+                'Please provide a route identifier, otherwise a link cannot be created!'
             );
         }
 
@@ -104,8 +101,9 @@ class Psr7Router extends AbstractRouter
         foreach ($this->routes as $routeDefinitions) {
             foreach ($routeDefinitions as $routeDefinition) {
                 $route = $routeDefinition['route'];
+                $identifier = $this->getRouteIdentifier($route);
 
-                if ($target === $route->getTarget()) {
+                if ($routeIdentifier === $identifier) {
                     $determinedRouteDefinition = $routeDefinition;
                     break 2;
                 }
@@ -115,18 +113,18 @@ class Psr7Router extends AbstractRouter
         // when no path for the given $target can be found,
         // stop processing...
         if (null === $determinedRouteDefinition) {
-            throw new \InvalidArgumentException(sprintf('No route found for target "%s"', $target));
+            throw new \InvalidArgumentException(sprintf('No route found for identifier "%s"', $routeIdentifier));
         }
 
-        $identifier = $determinedRouteDefinition['identifier'];
+        $pathMatcher = $determinedRouteDefinition['pathMatcher'];
         $route = $determinedRouteDefinition['route'];
 
         $detectedParams = [];
 
-        preg_match_all($identifier, $route->getSource(), $detectedParams);
+        preg_match_all($pathMatcher, $route->getPath(), $detectedParams);
 
         $this->validateParams($route, $params, array_keys($this->mapParams($detectedParams)));
-        $link = $route->getSource();
+        $link = $route->getPath();
 
         foreach ($params as $name => $value) {
             $link = str_replace('[:' . $name . ']', urlencode($value), $link);
@@ -158,9 +156,9 @@ class Psr7Router extends AbstractRouter
     /**
      * {@inheritDoc}
      */
-    protected function getRouteIdentifier(Route $route)
+    protected function getPathMatcherForRoute(Route $route)
     {
-        $identifier = preg_replace('#\[:(.+?)\]#i', '(?P<$1>[^/]+?)/?', $route->getSource());
-        return sprintf('#^%s$#i', $identifier);
+        $pathMatcher = preg_replace('#\[:(.+?)\]#i', '(?P<$1>[^/]+?)/?', $route->getPath());
+        return sprintf('#^%s$#i', $pathMatcher);
     }
 }

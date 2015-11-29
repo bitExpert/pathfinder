@@ -62,7 +62,7 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
                     ->ifMatches('offerId', $matchingMatcher),
                 Route::get('/company/[:companyId]')
                     ->to('my.GetActionTokenWithUnmatchedParam')
-                    ->ifMatches('companyId', $notMatchingMatcher),
+                    ->ifMatches('companyId', $notMatchingMatcher)
             ]
         );
     }

@@ -52,28 +52,28 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function sourceSetByConstructorGetsReturnedAsIs()
+    public function pathSetByConstructorGetsReturnedAsIs()
     {
         $route = new Route('GET', '/info');
-        $this->assertSame('/info', $route->getSource());
+        $this->assertSame('/info', $route->getPath());
     }
 
     /**
      * @test
      */
-    public function sourceSetByFunctionGetsReturnedAsIs()
+    public function pathSetByFunctionGetsReturnedAsIs()
     {
         $route = Route::create()->from('/info');
-        $this->assertSame('/info', $route->getSource());
+        $this->assertSame('/info', $route->getPath());
     }
 
     /**
      * @test
      */
-    public function sourceSetByFactoryGetsReturnedAsIs()
+    public function pathSetByFactoryGetsReturnedAsIs()
     {
         $route = Route::create('GET', '/info');
-        $this->assertSame('/info', $route->getSource());
+        $this->assertSame('/info', $route->getPath());
     }
 
     /**
@@ -106,13 +106,13 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function settingSourceIsImmutable()
+    public function settingPathIsImmutable()
     {
         $route = Route::create();
         $route2 = $route->from('/test');
 
         $this->assertInstanceOf(Route::class, $route2);
-        $this->assertNotEquals($route->getSource(), $route2->getSource());
+        $this->assertNotEquals($route->getPath(), $route2->getPath());
     }
 
     /**

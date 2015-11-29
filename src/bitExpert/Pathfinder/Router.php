@@ -17,7 +17,7 @@ use Psr\Http\Message\ServerRequestInterface;
  *
  * @api
  */
-interface RouterInterface
+interface Router
 {
     const DEFAULT_TARGET_REQUEST_ATTRIBUTE = 'Pathfinder.target';
 
