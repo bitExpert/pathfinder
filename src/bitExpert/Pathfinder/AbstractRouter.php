@@ -186,7 +186,6 @@ abstract class AbstractRouter implements Router
      *
      * @param Route $route
      * @throws \ConfigurationException
-     * @return boolean
      */
     protected function validateRoute(Route $route)
     {
@@ -205,8 +204,6 @@ abstract class AbstractRouter implements Router
         if (!is_string($route->getTarget()) and (null === $route->getName())) {
             throw new \ConfigurationException('If defined route target is not a string a name has to be set');
         }
-
-        return true;
     }
 
     /**
