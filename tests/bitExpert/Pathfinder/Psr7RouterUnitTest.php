@@ -230,7 +230,9 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function throwsAnExceptionIfTargetIsCallableAndAddedRouteHasNoNameDefined()
     {
-        $this->router->addRoute(Route::get('/something')->to(function () {}));
+        $this->router->addRoute(Route::get('/something')->to(function () {
+            // do nothing
+        }));
     }
 
     /**
