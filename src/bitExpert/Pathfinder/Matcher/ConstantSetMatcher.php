@@ -58,6 +58,7 @@ class ConstantSetMatcher extends ValueSetMatcher
     }
 
     /**
+     * Transforms a simplified pattern (* for multiple characters ? for one) to a regular expression
      *
      * @param $pattern
      * @return mixed
