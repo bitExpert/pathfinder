@@ -15,14 +15,14 @@ use Zend\Diactoros\ServerRequest;
 use bitExpert\Pathfinder\Matcher\Matcher;
 
 /**
- * Unit test for {@link \bitExpert\Pathfinder\PathRouter}.
+ * Unit test for {@link \bitExpert\Pathfinder\Psr7Router}.
  *
- * @covers \bitExpert\Pathfinder\PathRouter
+ * @covers \bitExpert\Pathfinder\Psr7Router
  */
 class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var PathRouter
+     * @var Psr7Router
      */
     protected $router;
     /**
@@ -230,7 +230,9 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function throwsAnExceptionIfTargetIsCallableAndAddedRouteHasNoNameDefined()
     {
-        $this->router->addRoute(Route::get('/something')->to(function () {}));
+        $this->router->addRoute(Route::get('/something')->to(function () {
+            // do nothing
+        }));
     }
 
     /**
