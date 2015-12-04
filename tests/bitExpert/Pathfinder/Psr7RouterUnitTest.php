@@ -301,4 +301,34 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
     {
         $this->router->generateUri('my.GetActionTokenWithUnmatchedParam', ['companyId' => 'abc']);
     }
+
+    /**
+     * @test
+     */
+    public function routeMatchingShouldNotDiscardQueryParams()
+    {
+        $this->request = new ServerRequest([], [], '/users', 'GET');
+        $this->request = $this->request->withQueryParams(['name' => 'John']);
+        $this->request = $this->router->match($this->request);
+        $targetRequestAttribute = $this->router->getTargetRequestAttribute();
+
+        $queryParams = $this->request->getQueryParams();
+        $this->assertTrue(isset($queryParams['name']));
+        $this->assertSame('John', $queryParams['name']);
+    }
+
+    /**
+     * @test
+     */
+    public function routeParamsOverwriteQueryParams()
+    {
+        $this->request = new ServerRequest([], [], '/user/123', 'GET');
+        $this->request = $this->request->withQueryParams(['userId' => '999']);
+        $this->request = $this->router->match($this->request);
+        $targetRequestAttribute = $this->router->getTargetRequestAttribute();
+
+        $queryParams = $this->request->getQueryParams();
+        $this->assertTrue(isset($queryParams['userId']));
+        $this->assertSame('123', $queryParams['userId']);
+    }
 }
