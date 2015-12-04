@@ -20,8 +20,7 @@ interface Matcher
     /**
      * Function to test the given value against implemented criteria
      *
-     * @param $param
-     * @param $value
+     * @param mixed $value
      * @return mixed
      */
     public function match($value);
