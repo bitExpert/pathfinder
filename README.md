@@ -1,6 +1,8 @@
 # bitexpert/pathfinder
 A PHP routing component.
 
+## How to use ...
+
 Router
 ------
 
@@ -42,6 +44,76 @@ Matchers are used to ensure that your route params match given criteria such as 
 ```php
 Route::get('/user/[:id]')->to('users')->ifMatches('id', new NumericMatcher());
 ```
+
+## How to implement your own ...
+
+Matchers
+--------
+Each matcher in Pathfinder must implement the \bitExpert\Pathfinder\Matcher\Matcher interface.
+
+```php
+class OnlyDigitMatcher implements \bitExpert\Pathfinder\Matcher\Matcher {
+    public function match($value) {
+        return ctype_digit($value);
+    }
+}
+```
+
+Routes
+------
+Routes in Pathfinder must be an instance of the \bitExpert\Pathfinder\Route class.
+
+```php
+$route = \bitExpert\Pathfinder\Route::get('/user/[:id]')->to('users')->ifMatches('id', new OnlyDigitMatcher());
+```
+
+Router
+------
+Each router in Pathfinder must implement the \bitExpert\Pathfinder\Router interface.
+
+```php
+use \Psr\Http\Message\ServerRequestInterface;
+use \bitExpert\Pathfinder\Route;
+
+class SimpleRouter implements \bitExpert\Pathfinder\Router {
+
+ protected $routes = [];
+ protected $defaultTarget;
+
+ public function addRoute(Route $route) {
+    $this->routes[] = $route;
+    return $this;
+ }
+ 
+ public function setRoutes(array $routes) {
+    foreach($routes as $route) {
+        $this->addRoute($route);
+    }
+    return $this;
+ }
+ 
+ public function getTargetRequestAttribute() {
+    return self::DEFAULT_TARGET_REQUEST_ATTRIBUTE;
+ }
+ 
+ public function setDefaultTarget($defaultTarget) {
+    $this->defaultTarget = $defaultTarget;
+    return $this;
+ }
+ 
+ public function match(ServerRequestInterface $request) {
+    // using \bitExpert\Pathfinder\Psr7Router::match() logic ...
+ }
+ 
+ public function generateUri($routeIdentifier, array $params = []) {
+     // using \bitExpert\Pathfinder\Psr7Router::generateUri() logic ...
+ }
+}
+```
+
+
+
+
 
 License
 -------
