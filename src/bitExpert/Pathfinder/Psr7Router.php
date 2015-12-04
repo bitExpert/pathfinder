@@ -63,6 +63,7 @@ class Psr7Router extends AbstractRouter
 
                 // match params against configured matchers and only continue if valid
                 if ($this->matchParams($route, $params)) {
+                    $params = array_merge($request->getQueryParams(), $params);
                     // setting route params as query params
                     $request = $request->withQueryParams($params);
                     $identifier = $this->getRouteIdentifier($route);
