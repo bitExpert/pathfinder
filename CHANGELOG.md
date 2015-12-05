@@ -24,13 +24,13 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
--  [#11](https://github.com/bitExpert/disco/pull/11) Updated Composer dependencies
--  [#10](https://github.com/bitExpert/disco/pull/10) Ported bitExpert internal Phing setup over to the pathfinder package
--  [#8](https://github.com/bitExpert/disco/pull/8) Fixed problem in route resolving: Query Params are kept as-is when route is resolved
--  [#7](https://github.com/bitExpert/disco/pull/7) Few new matchers 
--  [#6](https://github.com/bitExpert/disco/pull/6) Remove PHP 7 from allow_failures Travis configuration 
--  [#4](https://github.com/bitExpert/disco/pull/4) Minor correction for validateRoute
--  [#2](https://github.com/bitExpert/disco/pull/2) Added addRoute method to Router
+-  [#11](https://github.com/bitExpert/pathfinder/pull/11) Updated Composer dependencies
+-  [#10](https://github.com/bitExpert/pathfinder/pull/10) Ported bitExpert internal Phing setup over to the pathfinder package
+-  [#8](https://github.com/bitExpert/pathfinder/pull/8) Fixed problem in route resolving: Query Params are kept as-is when route is resolved
+-  [#7](https://github.com/bitExpert/pathfinder/pull/7) Few new matchers 
+-  [#6](https://github.com/bitExpert/pathfinder/pull/6) Remove PHP 7 from allow_failures Travis configuration 
+-  [#4](https://github.com/bitExpert/pathfinder/pull/4) Minor correction for validateRoute
+-  [#2](https://github.com/bitExpert/pathfinder/pull/2) Added addRoute method to Router
 
 ### Deprecated
 
@@ -46,4 +46,4 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ## 0.1.0
 
-Initial release of the Disco package.
+Initial release of the Pathfinder package.
