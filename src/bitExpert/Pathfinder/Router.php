@@ -19,8 +19,6 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 interface Router
 {
-    const DEFAULT_TARGET_REQUEST_ATTRIBUTE = 'Pathfinder.target';
-
     /**
      * Adds a route to the routes collection
      *
@@ -36,13 +34,6 @@ interface Router
     public function setRoutes(array $routes);
 
     /**
-     * Returns the currently configured name of the attribute to store the target inside the request
-     *
-     * @return string
-     */
-    public function getTargetRequestAttribute();
-
-    /**
      * Sets the default target. It is used to retrieve a target, if
      * no route can be resolved to a target.
      *
@@ -56,7 +47,7 @@ interface Router
      * was provided.
      *
      * @param ServerRequestInterface $request
-     * @return ServerRequestInterface
+     * @return RoutingResult
      */
     public function match(ServerRequestInterface $request);
 

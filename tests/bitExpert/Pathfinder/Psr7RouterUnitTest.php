@@ -73,10 +73,10 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
     public function noMatchingMethodWillReturnNullWhenNoDefaultTargetWasSet()
     {
         $this->request = new ServerRequest([], [], '/users', 'HEAD');
-        $this->request = $this->router->match($this->request);
-        $targetRequestAttribute = $this->router->getTargetRequestAttribute();
+        $result = $this->router->match($this->request);
 
-        $this->assertNull($this->request->getAttribute($targetRequestAttribute));
+        $this->assertTrue($result->failed());
+        $this->assertNull($result->getTarget());
     }
 
     /**
@@ -87,10 +87,10 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
         $this->request = new ServerRequest([], [], '/users', 'HEAD');
 
         $this->router->setDefaultTarget('default.target');
-        $this->request = $this->router->match($this->request);
-        $targetRequestAttribute = $this->router->getTargetRequestAttribute();
+        $result = $this->router->match($this->request);
 
-        $this->assertSame('default.target', $this->request->getAttribute($targetRequestAttribute));
+        $this->assertTrue($result->failed());
+        $this->assertSame('default.target', $result->getTarget());
     }
 
     /**
@@ -99,10 +99,10 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
     public function noMatchingRouteWillReturnDefaultTarget()
     {
         $this->router->setDefaultTarget('default.target');
-        $this->request = $this->router->match($this->request);
-        $targetRequestAttribute = $this->router->getTargetRequestAttribute();
+        $result = $this->router->match($this->request);
 
-        $this->assertSame('default.target', $this->request->getAttribute($targetRequestAttribute));
+        $this->assertTrue($result->failed());
+        $this->assertSame('default.target', $result->getTarget());
     }
 
     /**
@@ -110,20 +110,10 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function noMatchingRouteWillReturnNullWhenNoDefaultTargetWasSet()
     {
-        $this->request = $this->router->match($this->request);
-        $targetRequestAttribute = $this->router->getTargetRequestAttribute();
-        $this->assertNull($this->request->getAttribute($targetRequestAttribute));
-    }
+        $result = $this->router->match($this->request);
 
-    /**
-     * @test
-     */
-    public function queryStringWillBeIgnoredWhenMatchingRoute()
-    {
-        $this->request = new ServerRequest([], [], '/users?sessid=ABDC', 'GET');
-        $this->request = $this->router->match($this->request);
-        $targetRequestAttribute = $this->router->getTargetRequestAttribute();
-        $this->assertSame('my.GetActionToken', $this->request->getAttribute($targetRequestAttribute));
+        $this->assertTrue($result->failed());
+        $this->assertNull($result->getTarget());
     }
 
     /**
@@ -132,25 +122,26 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
     public function matchingRouteWithoutParamsReturnsTarget()
     {
         $this->request = new ServerRequest([], [], '/users', 'GET');
-        $this->request = $this->router->match($this->request);
-        $targetRequestAttribute = $this->router->getTargetRequestAttribute();
-        $this->assertSame('my.GetActionToken', $this->request->getAttribute($targetRequestAttribute));
+        $result = $this->router->match($this->request);
+
+        $this->assertTrue($result->succeeded());
+        $this->assertSame('my.GetActionToken', $result->getTarget());
     }
 
     /**
      * @test
      */
-    public function matchingRouteWithParamsReturnsTargetAndSetsParamsInRequest()
+    public function matchingRouteWithParamsReturnsTargetAndParams()
     {
         $this->request = new ServerRequest([], [], '/user/123', 'GET');
-        $this->request = $this->router->match($this->request);
-        $targetRequestAttribute = $this->router->getTargetRequestAttribute();
+        $result = $this->router->match($this->request);
 
-        $queryParams = $this->request->getQueryParams();
+        $params = $result->getParams();
 
-        $this->assertSame('my.GetActionTokenWithParam', $this->request->getAttribute($targetRequestAttribute));
-        $this->assertTrue(isset($queryParams['userId']));
-        $this->assertSame('123', $queryParams['userId']);
+        $this->assertTrue($result->succeeded());
+        $this->assertSame('my.GetActionTokenWithParam', $result->getTarget());
+        $this->assertTrue(isset($params['userId']));
+        $this->assertSame('123', $params['userId']);
     }
 
     /**
@@ -159,9 +150,10 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
     public function doesNotUseRouteIfMatcherDoesNotMatch()
     {
         $this->request = new ServerRequest([], [], '/company/abc', 'GET');
-        $this->request = $this->router->match($this->request);
-        $targetRequestAttribute = $this->router->getTargetRequestAttribute();
-        $this->assertNull($this->request->getAttribute($targetRequestAttribute));
+        $result = $this->router->match($this->request);
+
+        $this->assertTrue($result->failed());
+        $this->assertNull($result->getTarget());
     }
 
     /**
@@ -170,9 +162,10 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
     public function usesRouteIfMatcherDoesMatch()
     {
         $this->request = new ServerRequest([], [], '/offer/123', 'GET');
-        $this->request = $this->router->match($this->request);
-        $targetRequestAttribute = $this->router->getTargetRequestAttribute();
-        $this->assertEquals('my.GetActionTokenWithMatchedParam', $this->request->getAttribute($targetRequestAttribute));
+        $result = $this->router->match($this->request);
+
+        $this->assertTrue($result->succeeded());
+        $this->assertEquals('my.GetActionTokenWithMatchedParam', $result->getTarget());
     }
 
     /**
@@ -219,9 +212,9 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
         $this->router->addRoute(Route::get('/something')->to('someaction'));
         $this->request = new ServerRequest([], [], '/something', 'GET');
 
-        $this->request = $this->router->match($this->request);
-        $targetRequestAttribute = $this->router->getTargetRequestAttribute();
-        $this->assertEquals('someaction', $this->request->getAttribute($targetRequestAttribute));
+        $result = $this->router->match($this->request);
+        $this->assertTrue($result->succeeded());
+        $this->assertEquals('someaction', $result->getTarget());
     }
 
     /**
@@ -300,35 +293,5 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
     public function willThrowAnExceptionWhenProvidingNotMatchingParams()
     {
         $this->router->generateUri('my.GetActionTokenWithUnmatchedParam', ['companyId' => 'abc']);
-    }
-
-    /**
-     * @test
-     */
-    public function routeMatchingShouldNotDiscardQueryParams()
-    {
-        $this->request = new ServerRequest([], [], '/users', 'GET');
-        $this->request = $this->request->withQueryParams(['name' => 'John']);
-        $this->request = $this->router->match($this->request);
-        $targetRequestAttribute = $this->router->getTargetRequestAttribute();
-
-        $queryParams = $this->request->getQueryParams();
-        $this->assertTrue(isset($queryParams['name']));
-        $this->assertSame('John', $queryParams['name']);
-    }
-
-    /**
-     * @test
-     */
-    public function routeParamsOverwriteQueryParams()
-    {
-        $this->request = new ServerRequest([], [], '/user/123', 'GET');
-        $this->request = $this->request->withQueryParams(['userId' => '999']);
-        $this->request = $this->router->match($this->request);
-        $targetRequestAttribute = $this->router->getTargetRequestAttribute();
-
-        $queryParams = $this->request->getQueryParams();
-        $this->assertTrue(isset($queryParams['userId']));
-        $this->assertSame('123', $queryParams['userId']);
     }
 }

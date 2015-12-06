@@ -30,10 +30,6 @@ abstract class AbstractRouter implements Router
      * @var array
      */
     protected $routes;
-    /**
-     * @var string
-     */
-    protected $targetRequestAttribute;
 
     /**
      * Creates a new {@link \bitExpert\Pathfinder\RegexRouter}.
@@ -45,7 +41,6 @@ abstract class AbstractRouter implements Router
         // completes the base url with a / if not set in configuration
         $this->baseURL = rtrim($baseURL, '/') . '/';
         $this->defaultTarget = null;
-        $this->targetRequestAttribute = self::DEFAULT_TARGET_REQUEST_ATTRIBUTE;
         $this->routes = [];
 
         $this->logger = LoggerFactory::getLogger(__CLASS__);
@@ -57,22 +52,6 @@ abstract class AbstractRouter implements Router
     public function setDefaultTarget($defaultTarget)
     {
         $this->defaultTarget = $defaultTarget;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setTargetRequestAttribute($targetRequestAttribute)
-    {
-        $this->targetRequestAttribute = $targetRequestAttribute;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getTargetRequestAttribute()
-    {
-        return $this->targetRequestAttribute;
     }
 
     /**

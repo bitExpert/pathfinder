@@ -44,7 +44,7 @@ class Psr7Router extends AbstractRouter
                 )
             );
 
-            return $request->withAttribute($this->targetRequestAttribute, $this->defaultTarget);
+            return RoutingResult::forFailure($this->defaultTarget);
         }
 
         $this->logger->debug(sprintf('Analysing request path "%s"', $requestPath));
@@ -60,13 +60,10 @@ class Psr7Router extends AbstractRouter
                 // remove all elements which should not be set in the request,
                 // e.g. the matching url string as well as all numeric items
                 $params = $this->mapParams($urlVars);
+                $identifier = $this->getRouteIdentifier($route);
 
                 // match params against configured matchers and only continue if valid
                 if ($this->matchParams($route, $params)) {
-                    $params = array_merge($request->getQueryParams(), $params);
-                    // setting route params as query params
-                    $request = $request->withQueryParams($params);
-                    $identifier = $this->getRouteIdentifier($route);
                     $this->logger->debug(
                         sprintf(
                             'Route "%s" matches. Applying its target...',
@@ -74,14 +71,16 @@ class Psr7Router extends AbstractRouter
                         )
                     );
 
-                    return $request->withAttribute($this->targetRequestAttribute, $route->getTarget());
+                    $target = $route->getTarget();
+
+                    return RoutingResult::forSuccess($target, $params);
                 }
             }
         }
 
         $this->logger->debug('No matching route found. Applying default target.');
 
-        return $request->withAttribute($this->getTargetRequestAttribute(), $this->defaultTarget);
+        return RoutingResult::forFailure($this->defaultTarget);
     }
 
     /**
