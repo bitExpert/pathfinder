@@ -11,7 +11,6 @@
 namespace bitExpert\Pathfinder;
 
 use bitExpert\Slf4PsrLog\LoggerFactory;
-use Psr\Http\Message\ServerRequestInterface;
 
 abstract class AbstractRouter implements Router
 {
@@ -201,7 +200,7 @@ abstract class AbstractRouter implements Router
             throw new \ConfigurationException('Route must at least accept one request method');
         }
 
-        if (!is_string($route->getTarget()) and (null === $route->getName())) {
+        if (!is_string($route->getTarget()) && (null === $route->getName())) {
             throw new \ConfigurationException('If defined route target is not a string a name has to be set');
         }
     }
