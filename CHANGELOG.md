@@ -2,11 +2,31 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 0.3.0 - TBD
+## 0.4.0 - TBD
 
 ### Added
 
 - Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
+## 0.3.0
+
+### Added
+
+-  [#16](https://github.com/bitExpert/pathfinder/pull/16) Fixed issues reported by SensioLabs Insight. 
+-  [#14](https://github.com/bitExpert/pathfinder/pull/14) "Optimize" the interaction with Adroit.
+-  [#13](https://github.com/bitExpert/pathfinder/pull/13) Added Changelog file.
 
 ### Deprecated
 
