@@ -1,8 +1,8 @@
 # bitexpert/pathfinder
 A PHP routing component.
 
-[![Build Status](https://travis-ci.org/bitExpert/pathfinder.svg?branch=master)](https://travis-ci.org/bitExpert/pathfinder)
-[![Dependency Status](https://www.versioneye.com/php/bitexpert:pathfinder/dev-master/badge?style=flat)](https://www.versioneye.com/php/bitexpert:pathfinder/dev-master)
+[![Build Status](https://travis-ci.org/bitExpert/pathfinder.svg?branch=v0.3.0)](https://travis-ci.org/bitExpert/pathfinder)
+[![Dependency Status](https://www.versioneye.com/php/bitexpert:pathfinder/0.3.1/badge?style=flat)](https://www.versioneye.com/php/bitexpert:pathfinder/0.3.1)
 
 Router
 ------
