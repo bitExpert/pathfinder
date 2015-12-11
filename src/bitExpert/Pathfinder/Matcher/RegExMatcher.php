@@ -33,7 +33,7 @@ class RegExMatcher implements Matcher
     /**
      * @inheritdoc
      */
-    public function match($value)
+    public function __invoke($value)
     {
         $value = str_replace('#', '\#', $value);
         return (preg_match(sprintf('#^%s$#', $this->regex), $value) > 0);

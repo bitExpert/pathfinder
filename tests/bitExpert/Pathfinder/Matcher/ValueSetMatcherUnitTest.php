@@ -23,24 +23,13 @@ class ValueSetMatcherUnitTest extends \PHPUnit_Framework_TestCase
     protected $matcher;
 
     /**
-     * @inheritdoc
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->matcher = new ValueSetMatcher(array(
-            'one',
-            2
-        ));
-    }
-
-    /**
      * @test
      */
     public function matchesValidValues()
     {
-        $this->assertTrue($this->matcher->match('one'));
-        $this->assertTrue($this->matcher->match(2));
+        $matcher = $this->getMatcher();
+        $this->assertTrue($matcher('one'));
+        $this->assertTrue($matcher(2));
     }
 
     /**
@@ -48,7 +37,16 @@ class ValueSetMatcherUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function doesNotMatchInvalidValues()
     {
-        $this->assertFalse($this->matcher->match(1));
-        $this->assertFalse($this->matcher->match('two'));
+        $matcher = $this->getMatcher();
+        $this->assertFalse($matcher(1));
+        $this->assertFalse($matcher('two'));
+    }
+
+    protected function getMatcher()
+    {
+        return new ValueSetMatcher(array(
+            'one',
+            2
+        ));
     }
 }

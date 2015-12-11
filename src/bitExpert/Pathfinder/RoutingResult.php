@@ -124,4 +124,14 @@ class RoutingResult
     {
         return (null !== $this->target);
     }
+
+    /**
+     * Returns whether the result carries a callable target
+     *
+     * @return bool
+     */
+    public function hasCallableTarget()
+    {
+        return $this->hasTarget() && is_callable($this->target);
+    }
 }

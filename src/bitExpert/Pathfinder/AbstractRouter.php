@@ -27,7 +27,7 @@ abstract class AbstractRouter implements Router
      */
     protected $defaultTarget;
     /**
-     * @var array
+     * @var Route[][]
      */
     protected $routes;
 
@@ -73,7 +73,7 @@ abstract class AbstractRouter implements Router
 
             $valueMatchers = $matchers[$name];
             foreach ($valueMatchers as $matcher) {
-                if (!$matcher->match($value)) {
+                if (!$matcher($value)) {
                     $this->logger->debug(sprintf(
                         'Value "%s" for param "%s" did not match criteria of matcher "%s"',
                         $value,
@@ -148,7 +148,7 @@ abstract class AbstractRouter implements Router
     /**
      * Sets the routes.
      *
-     * @param array $routes
+     * @param Route[] $routes
      */
     public function setRoutes(array $routes)
     {
@@ -188,7 +188,7 @@ abstract class AbstractRouter implements Router
      * Returns the identifier string for given route
      *
      * @param Route $route
-     * @return target|string
+     * @return mixed
      */
     protected function getRouteIdentifier(Route $route)
     {

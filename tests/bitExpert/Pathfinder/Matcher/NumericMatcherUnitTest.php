@@ -23,20 +23,12 @@ class NumericMatcherUnitTest extends \PHPUnit_Framework_TestCase
     protected $matcher;
 
     /**
-     * @inheritdoc
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->matcher = new NumericMatcher();
-    }
-
-    /**
      * @test
      */
     public function matchesNumericValue()
     {
-        $result = $this->matcher->match('1234567');
+        $matcher = new NumericMatcher();
+        $result = $matcher('1234567');
         $this->assertTrue($result);
     }
 
@@ -45,7 +37,8 @@ class NumericMatcherUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function doesNotMatchNumericValuesStartingWithZero()
     {
-        $result = $this->matcher->match('01234567');
+        $matcher = new NumericMatcher();
+        $result = $matcher('01234567');
         $this->assertFalse($result);
     }
 
@@ -54,7 +47,8 @@ class NumericMatcherUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function doesNotMatchWhenCharactersAreIncluded()
     {
-        $result = $this->matcher->match('1234a567');
+        $matcher = new NumericMatcher();
+        $result = $matcher('1234a567');
         $this->assertFalse($result);
     }
 }

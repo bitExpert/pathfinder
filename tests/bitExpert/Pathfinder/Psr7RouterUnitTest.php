@@ -37,16 +37,16 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
     {
         parent::setUp();
 
-        $matcherMockBuilder = $this->getMockBuilder(Matcher::class)->setMethods(['match']);
+        $matcherMockBuilder = $this->getMockBuilder(Matcher::class)->setMethods(['__invoke']);
 
         $notMatchingMatcher = $matcherMockBuilder->getMock();
         $notMatchingMatcher->expects($this->any())
-            ->method('match')
+            ->method('__invoke')
             ->will($this->returnValue(false));
 
         $matchingMatcher = $matcherMockBuilder->getMock();
         $matchingMatcher->expects($this->any())
-            ->method('match')
+            ->method('__invoke')
             ->will($this->returnValue(true));
 
         $this->request = new ServerRequest();
@@ -62,7 +62,7 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
                     ->ifMatches('offerId', $matchingMatcher),
                 Route::get('/company/[:companyId]')
                     ->to('my.GetActionTokenWithUnmatchedParam')
-                    ->ifMatches('companyId', $notMatchingMatcher)
+                    ->ifMatches('companyId', $notMatchingMatcher),
             ]
         );
     }

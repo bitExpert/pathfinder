@@ -23,18 +23,18 @@ class ConstantSetMatcherUnitTest extends \PHPUnit_Framework_TestCase
     public function matchesAgainstValidValuesOfMatchingPattern()
     {
         $matcher = new ConstantSetMatcher(ConstantSetMatcherTestClass::class, 'TEST_CONSTANT_*');
-        $this->assertTrue($matcher->match(1));
-        $this->assertTrue($matcher->match(2));
-        $this->assertTrue($matcher->match(3));
+        $this->assertTrue($matcher(1));
+        $this->assertTrue($matcher(2));
+        $this->assertTrue($matcher(3));
 
         $matcher = new ConstantSetMatcher(ConstantSetMatcherTestClass::class, '*_CONSTANT_*');
-        $this->assertTrue($matcher->match(1));
-        $this->assertTrue($matcher->match(2));
-        $this->assertTrue($matcher->match(3));
+        $this->assertTrue($matcher(1));
+        $this->assertTrue($matcher(2));
+        $this->assertTrue($matcher(3));
 
-        $this->assertTrue($matcher->match('one'));
-        $this->assertTrue($matcher->match('two'));
-        $this->assertTrue($matcher->match('three'));
+        $this->assertTrue($matcher('one'));
+        $this->assertTrue($matcher('two'));
+        $this->assertTrue($matcher('three'));
     }
 
     /**
@@ -44,13 +44,13 @@ class ConstantSetMatcherUnitTest extends \PHPUnit_Framework_TestCase
     {
         $matcher = new ConstantSetMatcher(ConstantSetMatcherTestClass::class, 'TEST_CONSTANT_*');
 
-        $this->assertFalse($matcher->match(4));
-        $this->assertFalse($matcher->match('one'));
-        $this->assertFalse($matcher->match('two'));
-        $this->assertFalse($matcher->match('three'));
+        $this->assertFalse($matcher(4));
+        $this->assertFalse($matcher('one'));
+        $this->assertFalse($matcher('two'));
+        $this->assertFalse($matcher('three'));
 
         $matcher = new ConstantSetMatcher(ConstantSetMatcherTestClass::class, '*_CONSTANT_*');
-        $this->assertFalse($matcher->match('four'));
+        $this->assertFalse($matcher('four'));
     }
 
     /**
@@ -60,11 +60,11 @@ class ConstantSetMatcherUnitTest extends \PHPUnit_Framework_TestCase
     {
         $matcher = new ConstantSetMatcher(ConstantSetMatcherTestClass::class, '*_CONST_*');
 
-        $this->assertFalse($matcher->match(1));
-        $this->assertFalse($matcher->match(2));
-        $this->assertFalse($matcher->match(3));
-        $this->assertFalse($matcher->match('one'));
-        $this->assertFalse($matcher->match('two'));
-        $this->assertFalse($matcher->match('three'));
+        $this->assertFalse($matcher(1));
+        $this->assertFalse($matcher(2));
+        $this->assertFalse($matcher(3));
+        $this->assertFalse($matcher('one'));
+        $this->assertFalse($matcher('two'));
+        $this->assertFalse($matcher('three'));
     }
 }

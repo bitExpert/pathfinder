@@ -21,7 +21,7 @@ interface Matcher
      * Function to test the given value against implemented criteria
      *
      * @param mixed $value
-     * @return mixed
+     * @return bool
      */
-    public function match($value);
+    public function __invoke($value);
 }
