@@ -30,7 +30,7 @@ class Route
      */
     protected $target;
     /**
-     * @var Matcher[]
+     * @var callable[][]
      */
     protected $matchers;
     /**
@@ -44,6 +44,7 @@ class Route
      * @param array|string $methods The HTTP methods the route is active (e.g. GET, POST, PUT, ...)
      * @param string|null $path
      * @param mixed|null $target
+     * @param callable|callable[] The matcher or array of matchers for the param
      */
     public function __construct($methods = [], $path = null, $target = null, $matchers = [])
     {
@@ -60,7 +61,7 @@ class Route
      * @param array $methods
      * @param string|null $path
      * @param mixed|null $target
-     * @param array $matchers
+     * @param callable|callable[] The matcher or array of matchers for the param
      * @return static
      */
     public static function create($methods = [], $path = null, $target = null, $matchers = [])
@@ -73,7 +74,7 @@ class Route
      *
      * @param string|null $path
      * @param mixed|null $target
-     * @param array $matchers
+     * @param callable|callable[] The matcher or array of matchers for the param
      * @return Route
      */
     public static function get($path = null, $target = null, $matchers = [])
@@ -86,7 +87,7 @@ class Route
      *
      * @param string|null $path
      * @param mixed|null $target
-     * @param array $matchers
+     * @param callable|callable[] The matcher or array of matchers for the param
      * @return Route
      */
     public static function post($path = null, $target = null, $matchers = [])
@@ -99,7 +100,7 @@ class Route
      *
      * @param string|null $path
      * @param mixed|null $target
-     * @param array $matchers
+     * @param callable|callable[] The matcher or array of matchers for the param
      * @return Route
      */
     public static function put($path = null, $target = null, $matchers = [])
@@ -112,7 +113,7 @@ class Route
      *
      * @param string|null $path
      * @param mixed|null $target
-     * @param array $matchers
+     * @param callable|callable[] The matcher or array of matchers for the param
      * @return Route
      */
     public static function delete($path = null, $target = null, $matchers = [])
@@ -125,7 +126,7 @@ class Route
      *
      * @param string|null $path
      * @param mixed|null $target
-     * @param array $matchers
+     * @param callable|callable[] The matcher or array of matchers for the param
      * @return Route
      */
     public static function options($path = null, $target = null, $matchers = [])
@@ -138,7 +139,7 @@ class Route
      *
      * @param string|null $path
      * @param mixed|null $target
-     * @param array $matchers
+     * @param callable|callable[] The matcher or array of matchers for the param
      * @return Route
      */
     public static function patch($path = null, $target = null, $matchers = [])
@@ -185,7 +186,7 @@ class Route
      * Sets matcher(s) which the given param should match for the route to be active
      *
      * @param string $param The param name to set the matcher(s) for
-     * @param array|Matcher $matchers The matcher or array of matchers for the param
+     * @param callable|callable[] The matcher or array of matchers for the param
      * @return Route
      */
     public function ifMatches($param, $matchers)
@@ -199,14 +200,12 @@ class Route
         $matchers = is_array($matchers) ? $matchers : [$matchers];
 
         foreach ($matchers as $matcher) {
-            if ($matcher instanceof Matcher) {
-                continue;
+            if (!is_callable($matcher)) {
+                throw new \InvalidArgumentException(sprintf(
+                    'Given matcher is not a callable. See %s for signature.',
+                    Matcher::class
+                ));
             }
-
-            throw new \InvalidArgumentException(sprintf(
-                'Given matcher does not implement %s',
-                Matcher::class
-            ));
         }
 
         $instance->matchers[$param] = array_merge($instance->matchers[$param], $matchers);
@@ -297,7 +296,7 @@ class Route
     /**
      * Returns the target which is associated with the route.
      *
-     * @return target
+     * @return mixed
      */
     public function getTarget()
     {
@@ -337,7 +336,7 @@ class Route
     /**
      * Helper function to normalize HTTP request methods (trimmed to uppercase)
      *
-     * @return Callable
+     * @return callable
      */
     protected function normalizeMethod($method)
     {

@@ -15,7 +15,7 @@ namespace bitExpert\Pathfinder;
  *
  * @covers \bitExpert\Pathfinder\RoutingResult
  */
-class RoutinResultUnitTest extends \PHPUnit_Framework_TestCase
+class RoutingResultUnitTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @test
@@ -25,6 +25,7 @@ class RoutinResultUnitTest extends \PHPUnit_Framework_TestCase
         $params = ['param1' => 'value1', 'param2' => 'value2'];
 
         $result = RoutingResult::forSuccess('mySucceededTarget', $params);
+
         $this->assertTrue($result->succeeded());
         $this->assertFalse($result->failed());
         $this->assertTrue($result->hasTarget());
@@ -68,5 +69,29 @@ class RoutinResultUnitTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($result->hasTarget());
         $this->assertEquals('myFallbackTarget', $result->getTarget());
         $this->assertSame([], $result->getParams());
+    }
+
+    /**
+     * @test
+     */
+    public function hasCallableTargetReturnsTrueIfTargetCallable()
+    {
+        $result = RoutingResult::forSuccess(function () {
+            // nothing to implement, just for a test
+        });
+
+        $this->assertTrue($result->hasCallableTarget());
+    }
+
+    /**
+     * @test
+     */
+    public function hasCallableTargetReturnsFalseIfTargetCallableOrNotGiven()
+    {
+        $result = RoutingResult::forSuccess('mytarget');
+        $this->assertFalse($result->hasCallableTarget());
+
+        $result = RoutingResult::forFailure();
+        $this->assertFalse($result->hasCallableTarget());
     }
 }

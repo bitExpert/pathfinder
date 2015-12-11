@@ -32,8 +32,8 @@ class ConstantSetMatcher extends ValueSetMatcher
     /**
      * Returns the constant values of the given class when its name matches the given regex
      *
-     * @param $classIdentifier
-     * @param $pattern
+     * @param string $classIdentifier
+     * @param string $regex
      * @return array
      */
     protected function getConstantValues($classIdentifier, $regex)

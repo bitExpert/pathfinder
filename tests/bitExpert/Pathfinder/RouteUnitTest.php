@@ -163,4 +163,24 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(Route::class, $route2);
         $this->assertNotEquals($route->getMatchers(), $route2->getMatchers());
     }
+
+    /**
+     * @test
+     */
+    public function acceptsCallableMatchers()
+    {
+        $thrown = false;
+
+        try {
+            Route::get('/order/[:orderId]')
+                ->to('my.GetActionTokenWithFunctionMatcher')
+                ->ifMatches('orderId', function ($orderId) {
+                    return ((int)$orderId > 0);
+                });
+        } catch (\Exception $e) {
+            $thrown = true;
+        }
+
+        $this->assertFalse($thrown);
+    }
 }
