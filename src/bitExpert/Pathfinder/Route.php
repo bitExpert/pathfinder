@@ -30,7 +30,7 @@ class Route
      */
     protected $target;
     /**
-     * @var callable[][]
+     * @var callable[]
      */
     protected $matchers;
     /**
@@ -44,7 +44,7 @@ class Route
      * @param array|string $methods The HTTP methods the route is active (e.g. GET, POST, PUT, ...)
      * @param string|null $path
      * @param mixed|null $target
-     * @param array $matchers
+     * @param callable[] $matchers
      */
     public function __construct($methods = [], $path = null, $target = null, $matchers = [])
     {
@@ -297,7 +297,7 @@ class Route
     /**
      * Returns the target which is associated with the route.
      *
-     * @return mixed
+     * @return string
      */
     public function getTarget()
     {
@@ -307,7 +307,7 @@ class Route
     /**
      * Returns the methods accepted by this route
      *
-     * @return array|\string[]
+     * @return array
      */
     public function getMethods()
     {
