@@ -61,7 +61,7 @@ class Route
      * @param string|null $path
      * @param mixed|null $target
      * @param array $matchers
-     * @return static
+     * @return Route
      */
     public static function create($methods = [], $path = null, $target = null, $matchers = [])
     {
