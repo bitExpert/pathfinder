@@ -32,7 +32,7 @@ abstract class AbstractRouter implements Router
     protected $routes;
 
     /**
-     * Creates a new {@link \bitExpert\Pathfinder\RegexRouter}.
+     * Creates a new {@link \bitExpert\Pathfinder\AbstractRouter}.
      *
      * @param string $baseURL
      */
