@@ -188,6 +188,7 @@ class Route
      * @param string $param The param name to set the matcher(s) for
      * @param callable|callable[] The matcher or array of matchers for the param
      * @return Route
+     * @throws \InvalidArgumentException
      */
     public function ifMatches($param, $matchers)
     {
