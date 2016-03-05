@@ -188,7 +188,7 @@ abstract class AbstractRouter implements Router
      * Returns the identifier string for given route
      *
      * @param Route $route
-     * @return target|string
+     * @return string
      */
     protected function getRouteIdentifier(Route $route)
     {
