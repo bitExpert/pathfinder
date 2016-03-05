@@ -61,8 +61,8 @@ class Route
      * @param array $methods
      * @param string|null $path
      * @param mixed|null $target
-     * @param callable|callable[] The matcher or array of matchers for the param
-     * @return static
+     * @param array $matchers
+     * @return Route
      */
     public static function create($methods = [], $path = null, $target = null, $matchers = [])
     {
