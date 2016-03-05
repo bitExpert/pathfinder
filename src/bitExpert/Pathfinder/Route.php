@@ -44,7 +44,7 @@ class Route
      * @param array|string $methods The HTTP methods the route is active (e.g. GET, POST, PUT, ...)
      * @param string|null $path
      * @param mixed|null $target
-     * @param callable|callable[] The matcher or array of matchers for the param
+     * @param array $matchers
      */
     public function __construct($methods = [], $path = null, $target = null, $matchers = [])
     {
