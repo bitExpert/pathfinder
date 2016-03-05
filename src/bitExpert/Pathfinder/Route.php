@@ -299,7 +299,7 @@ class Route
     /**
      * Returns the target which is associated with the route.
      *
-     * @return target
+     * @return string
      */
     public function getTarget()
     {
@@ -309,7 +309,7 @@ class Route
     /**
      * Returns the methods accepted by this route
      *
-     * @return array|\string[]
+     * @return array
      */
     public function getMethods()
     {
