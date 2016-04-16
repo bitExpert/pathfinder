@@ -34,14 +34,6 @@ interface Router
     public function setRoutes(array $routes);
 
     /**
-     * Sets the default target. It is used to retrieve a target, if
-     * no route can be resolved to a target.
-     *
-     * @param mixed $defaultTarget
-     */
-    public function setDefaultTarget($defaultTarget);
-
-    /**
      * Resolves the target using the configured routes. Will return null
      * in case no target could be found and no default target
      * was provided.

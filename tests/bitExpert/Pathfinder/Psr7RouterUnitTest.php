@@ -29,6 +29,14 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
      * @var ServerRequestInterface
      */
     protected $request;
+    /**
+     * @var Matcher
+     */
+    protected $matchingMatcher;
+    /**
+     * @var Matcher
+     */
+    protected $notMatchingMatcher;
 
     /**
      * @see PHPUnit_Framework_TestCase::setUp()
@@ -39,107 +47,83 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
 
         $matcherMockBuilder = $this->getMockBuilder(Matcher::class)->setMethods(['__invoke']);
 
-        $notMatchingMatcher = $matcherMockBuilder->getMock();
-        $notMatchingMatcher->expects($this->any())
+        $this->notMatchingMatcher = $matcherMockBuilder->getMock();
+        $this->notMatchingMatcher->expects($this->any())
             ->method('__invoke')
             ->will($this->returnValue(false));
 
-        $matchingMatcher = $matcherMockBuilder->getMock();
-        $matchingMatcher->expects($this->any())
+        $this->matchingMatcher = $matcherMockBuilder->getMock();
+        $this->matchingMatcher->expects($this->any())
             ->method('__invoke')
             ->will($this->returnValue(true));
 
         $this->request = new ServerRequest();
         $this->router = new Psr7Router('http://localhost');
+    }
+
+    /**
+     * @test
+     */
+    public function noMatchingMethodWillReturnMethodNotAllowedFailureAndFirstCandidate()
+    {
+        $this->request = new ServerRequest([], [], '/users', 'HEAD');
+        $route = Route::get('/users')->to('my.GetActionToken');
         $this->router->setRoutes(
             [
-                Route::get('/users')->to('my.GetActionToken'),
-                Route::post('/users')->to('my.PostActionToken'),
-                Route::get('/user/[:userId]')->to('my.GetActionTokenWithParam'),
-                Route::get('/companies')->to('my.OtherGetActionToken'),
-                Route::get('/offer/[:offerId]')
-                    ->to('my.GetActionTokenWithMatchedParam')
-                    ->ifMatches('offerId', $matchingMatcher),
-                Route::get('/company/[:companyId]')
-                    ->to('my.GetActionTokenWithUnmatchedParam')
-                    ->ifMatches('companyId', $notMatchingMatcher),
+                $route,
+                Route::post('/users')->to('my.PostActionToken')
             ]
         );
-    }
-
-    /**
-     * @test
-     */
-    public function noMatchingMethodWillReturnNullWhenNoDefaultTargetWasSet()
-    {
-        $this->request = new ServerRequest([], [], '/users', 'HEAD');
         $result = $this->router->match($this->request);
 
         $this->assertTrue($result->failed());
-        $this->assertNull($result->getTarget());
+        $this->assertEquals(RoutingResult::FAILED_METHOD_NOT_ALLOWED, $result->getFailure());
+        $this->assertSame($route, $result->getRoute());
     }
 
     /**
      * @test
      */
-    public function noMatchingMethodWillReturnDefaultTarget()
-    {
-        $this->request = new ServerRequest([], [], '/users', 'HEAD');
-
-        $this->router->setDefaultTarget('default.target');
-        $result = $this->router->match($this->request);
-
-        $this->assertTrue($result->failed());
-        $this->assertSame('default.target', $result->getTarget());
-    }
-
-    /**
-     * @test
-     */
-    public function noMatchingRouteWillReturnDefaultTarget()
-    {
-        $this->router->setDefaultTarget('default.target');
-        $result = $this->router->match($this->request);
-
-        $this->assertTrue($result->failed());
-        $this->assertSame('default.target', $result->getTarget());
-    }
-
-    /**
-     * @test
-     */
-    public function noMatchingRouteWillReturnNullWhenNoDefaultTargetWasSet()
+    public function noMatchingRouteWillReturnNotFoundFailure()
     {
         $result = $this->router->match($this->request);
 
         $this->assertTrue($result->failed());
-        $this->assertNull($result->getTarget());
+        $this->assertEquals(null, $result->getRoute());
+        $this->assertEquals(RoutingResult::FAILED_NOT_FOUND, $result->getFailure());
     }
 
     /**
      * @test
      */
-    public function matchingRouteWithoutParamsReturnsTarget()
+    public function matchingRouteWithoutParamsReturnsRoute()
     {
+        $route = Route::get('/users')->to('userListAction');
+        $this->router->addRoute($route);
+
         $this->request = new ServerRequest([], [], '/users', 'GET');
         $result = $this->router->match($this->request);
 
         $this->assertTrue($result->succeeded());
-        $this->assertSame('my.GetActionToken', $result->getTarget());
+        $this->assertSame($route, $result->getRoute());
     }
 
     /**
      * @test
      */
-    public function matchingRouteWithParamsReturnsTargetAndParams()
+    public function matchingRouteWithParamsReturnsRouteAndParams()
     {
+        $route = Route::get('/user/[:userId]')->to('userDetailsAction');
+
+        $this->router->addRoute($route);
+
         $this->request = new ServerRequest([], [], '/user/123', 'GET');
         $result = $this->router->match($this->request);
 
         $params = $result->getParams();
 
         $this->assertTrue($result->succeeded());
-        $this->assertSame('my.GetActionTokenWithParam', $result->getTarget());
+        $this->assertSame($route, $result->getRoute());
         $this->assertTrue(isset($params['userId']));
         $this->assertSame('123', $params['userId']);
     }
@@ -147,13 +131,20 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function doesNotUseRouteIfMatcherDoesNotMatch()
+    public function returnsBadRequestIfMatcherDoesNotMatchAndReturnsCandidate()
     {
+        $route = Route::get('/company/[:companyId]')
+            ->to('my.GetActionTokenWithUnmatchedParam')
+            ->ifMatches('companyId', $this->notMatchingMatcher);
+
+        $this->router->addRoute($route);
+
         $this->request = new ServerRequest([], [], '/company/abc', 'GET');
         $result = $this->router->match($this->request);
 
         $this->assertTrue($result->failed());
-        $this->assertNull($result->getTarget());
+        $this->assertSame($route, $result->getRoute());
+        $this->assertEquals(RoutingResult::FAILED_BAD_REQUEST, $result->getFailure());
     }
 
     /**
@@ -161,11 +152,16 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function usesRouteIfMatcherDoesMatch()
     {
+        $route = Route::get('/offer/[:offerId]')
+            ->to('my.GetActionTokenWithMatchedParam')
+            ->ifMatches('offerId', $this->matchingMatcher);
+
+        $this->router->addRoute($route);
         $this->request = new ServerRequest([], [], '/offer/123', 'GET');
         $result = $this->router->match($this->request);
 
         $this->assertTrue($result->succeeded());
-        $this->assertEquals('my.GetActionTokenWithMatchedParam', $result->getTarget());
+        $this->assertSame($route, $result->getRoute());
     }
 
     /**
@@ -209,12 +205,13 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function addsRouteCorrectlyIfValid()
     {
-        $this->router->addRoute(Route::get('/something')->to('someaction'));
+        $route = Route::get('/something')->to('someaction');
+        $this->router->addRoute($route);
         $this->request = new ServerRequest([], [], '/something', 'GET');
 
         $result = $this->router->match($this->request);
         $this->assertTrue($result->succeeded());
-        $this->assertEquals('someaction', $result->getTarget());
+        $this->assertSame($route, $result->getRoute());
     }
 
     /**
@@ -242,9 +239,12 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function returnsTargetWhenMatchingRouteIsFound()
     {
+        $routeUrl = '/users';
+        $route = Route::get($routeUrl)->to('my.GetActionToken');
+        $this->router->addRoute($route);
         $url = $this->router->generateUri('my.GetActionToken');
 
-        $this->assertSame('/users', $url);
+        $this->assertSame($routeUrl, $url);
     }
 
     /**
@@ -252,6 +252,8 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function paramsAreIgnoredForRoutesWithoutAnyParams()
     {
+        $route = Route::get('/users')->to('my.GetActionToken');
+        $this->router->addRoute($route);
         $url = $this->router->generateUri('my.GetActionToken', ['sampleId' => 456]);
 
         $this->assertSame('/users', $url);
@@ -262,6 +264,8 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function routeParamPlaceholdersWillBeReplaced()
     {
+        $route = Route::get('/user/[:userId]')->to('my.GetActionTokenWithParam');
+        $this->router->addRoute($route);
         $url = $this->router->generateUri('my.GetActionTokenWithParam', ['userId' => 123]);
 
         $this->assertSame('/user/123', $url);
@@ -272,6 +276,9 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function paramsNotFoundInRouteWillBeIgnoredWhenLinkIsAssembled()
     {
+        $route = Route::get('/user/[:userId]')->to('my.GetActionTokenWithParam');
+
+        $this->router->addRoute($route);
         $url = $this->router->generateUri('my.GetActionTokenWithParam', ['userId' => 123, 'sampleId' => 123]);
 
         $this->assertSame('/user/123', $url);

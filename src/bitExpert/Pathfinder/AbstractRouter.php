@@ -23,11 +23,7 @@ abstract class AbstractRouter implements Router
      */
     protected $baseURL;
     /**
-     * @var mixed|null
-     */
-    protected $defaultTarget;
-    /**
-     * @var Route[][]
+     * @var Route[]
      */
     protected $routes;
 
@@ -40,18 +36,9 @@ abstract class AbstractRouter implements Router
     {
         // completes the base url with a / if not set in configuration
         $this->baseURL = rtrim($baseURL, '/') . '/';
-        $this->defaultTarget = null;
         $this->routes = [];
 
         $this->logger = LoggerFactory::getLogger(__CLASS__);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setDefaultTarget($defaultTarget)
-    {
-        $this->defaultTarget = $defaultTarget;
     }
 
     /**
@@ -128,21 +115,14 @@ abstract class AbstractRouter implements Router
     public function addRoute(Route $route)
     {
         $this->validateRoute($route);
+
         // get the specific path matcher for this route
         $pathMatcher = $this->getPathMatcherForRoute($route);
 
-        $methods = $route->getMethods();
-
-        foreach ($methods as $method) {
-            if (!isset($this->routes[$method])) {
-                $this->routes[$method] = [];
-            }
-
-            $this->routes[$method][] = [
-                'pathMatcher' => $pathMatcher,
-                'route' => $route
-            ];
-        }
+        $this->routes[] = [
+            'pathMatcher' => $pathMatcher,
+            'route' => $route
+        ];
     }
 
     /**

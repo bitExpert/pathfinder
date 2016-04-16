@@ -183,4 +183,16 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFalse($thrown);
     }
+
+    /**
+     * @test
+     */
+    public function returnsTrueIfTargetIsCallable()
+    {
+        $route = Route::get('/users')->to(function () {
+           // do nothing
+        });
+
+        $this->assertTrue($route->hasCallableTarget());
+    }
 }

@@ -35,52 +35,61 @@ class Psr7Router extends AbstractRouter
             $requestPath = substr($requestPath, 0, $queryStringPos);
         }
 
-        if (!isset($this->routes[$request->getMethod()]) || null === $requestPath) {
-            $this->logger->error(
-                sprintf(
-                    'No routes found for request method "%s". Returning default target "%s"',
-                    $request->getMethod(),
-                    $this->defaultTarget
-                )
-            );
-
-            return RoutingResult::forFailure($this->defaultTarget);
-        }
-
         $this->logger->debug(sprintf('Analysing request path "%s"', $requestPath));
 
-        foreach ($this->routes[$request->getMethod()] as $routeDefinition) {
+        $candidates = [];
+
+        foreach ($this->routes as $routeDefinition) {
             $route = $routeDefinition['route'];
             $identifier = $this->getRouteIdentifier($route);
 
             $this->logger->debug(sprintf('Trying to match requested path to route "%s"', $identifier));
 
             $urlVars = [];
+
             if (preg_match_all($routeDefinition['pathMatcher'], $requestPath, $urlVars)) {
+                $method = strtoupper(trim($request->getMethod()));
+                if (!in_array($method, $route->getMethods())) {
+                    $candidates[] = [
+                        'route' => $route,
+                        'failure' => RoutingResult::FAILED_METHOD_NOT_ALLOWED
+                    ];
+                    continue;
+                }
+
                 // remove all elements which should not be set in the request,
                 // e.g. the matching url string as well as all numeric items
                 $params = $this->mapParams($urlVars);
                 $identifier = $this->getRouteIdentifier($route);
 
-                // match params against configured matchers and only continue if valid
-                if ($this->matchParams($route, $params)) {
-                    $this->logger->debug(
-                        sprintf(
-                            'Route "%s" matches. Applying its target...',
-                            $identifier
-                        )
-                    );
+                if (!$this->matchParams($route, $params)) {
+                    $candidates[] = [
+                        'route' => $route,
+                        'failure' => RoutingResult::FAILED_BAD_REQUEST
+                    ];
 
-                    $target = $route->getTarget();
-
-                    return RoutingResult::forSuccess($target, $params);
+                    continue;
                 }
+
+                $this->logger->debug(
+                    sprintf(
+                        'Route "%s" matches. Applying its target...',
+                        $identifier
+                    )
+                );
+
+                return RoutingResult::forSuccess($route, $params);
             }
         }
 
-        $this->logger->debug('No matching route found. Applying default target.');
+        $this->logger->debug('No matching route found.');
 
-        return RoutingResult::forFailure($this->defaultTarget);
+        if (count($candidates)) {
+            $candidate = $candidates[0];
+            return RoutingResult::forFailure($candidate['failure'], $candidate['route']);
+        }
+
+        return RoutingResult::forFailure(RoutingResult::FAILED_NOT_FOUND);
     }
 
     /**
@@ -97,16 +106,13 @@ class Psr7Router extends AbstractRouter
 
         // try to find path for given $target
         $determinedRouteDefinition = null;
+        foreach ($this->routes as $routeDefinition) {
+            $route = $routeDefinition['route'];
 
-        foreach ($this->routes as $routeDefinitions) {
-            foreach ($routeDefinitions as $routeDefinition) {
-                $route = $routeDefinition['route'];
-                $identifier = $this->getRouteIdentifier($route);
-
-                if ($routeIdentifier === $identifier) {
-                    $determinedRouteDefinition = $routeDefinition;
-                    break 2;
-                }
+            $identifier = $this->getRouteIdentifier($route);
+            if ($routeIdentifier === $identifier) {
+                $determinedRouteDefinition = $routeDefinition;
+                break;
             }
         }
 
