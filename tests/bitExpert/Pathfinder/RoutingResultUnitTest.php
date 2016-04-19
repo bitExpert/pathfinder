@@ -52,9 +52,26 @@ class RoutingResultUnitTest extends \PHPUnit_Framework_TestCase
         $result = RoutingResult::forFailure(RoutingResult::FAILED_NOT_FOUND);
 
         $this->assertTrue($result->failed());
+        $this->assertEquals($result->getFailure(), RoutingResult::FAILED_NOT_FOUND);
         $this->assertFalse($result->succeeded());
         $this->assertFalse($result->hasRoute());
         $this->assertNull($result->getRoute());
+        $this->assertSame([], $result->getParams());
+    }
+
+    /**
+     * @test
+     */
+    public function forFailureGeneratesValidResultWithRoute()
+    {
+        $route = $this->getMock(Route::class);
+        $result = RoutingResult::forFailure(RoutingResult::FAILED_BAD_REQUEST, $route);
+
+        $this->assertTrue($result->failed());
+        $this->assertEquals($result->getFailure(), RoutingResult::FAILED_BAD_REQUEST);
+        $this->assertFalse($result->succeeded());
+        $this->assertTrue($result->hasRoute());
+        $this->assertSame($route, $result->getRoute());
         $this->assertSame([], $result->getParams());
     }
 }
