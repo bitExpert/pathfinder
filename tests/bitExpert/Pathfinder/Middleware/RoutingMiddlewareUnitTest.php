@@ -58,7 +58,8 @@ class RoutingMiddlewareUnitTest extends \PHPUnit_Framework_TestCase
     public function requestContainsRoutingResultInRoutingResultAttributeAfterRouting()
     {
         $self = $this;
-        $routingResult = RoutingResult::forSuccess('testtarget');
+        $route = Route::get('/test')->to('testAction');
+        $routingResult = RoutingResult::forSuccess($route);
 
         $this->router->expects($this->any())
             ->method('match')
