@@ -23,6 +23,7 @@ interface Router
      * Adds a route to the routes collection
      *
      * @param Route $route
+     * @throws \InvalidArgumentException
      */
     public function addRoute(Route $route);
 
@@ -30,6 +31,7 @@ interface Router
      * Sets the routes for the router
      *
      * @param array $routes
+     * @throws \InvalidArgumentException
      */
     public function setRoutes(array $routes);
 

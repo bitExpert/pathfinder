@@ -175,7 +175,7 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \ConfigurationException
+     * @expectedException \InvalidArgumentException
      */
     public function throwsAnExceptionIfAddedRouteHasNoMethodDefined()
     {
@@ -184,7 +184,7 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \ConfigurationException
+     * @expectedException \InvalidArgumentException
      */
     public function throwsAnExceptionIfPathOfAddedRouteIsMissing()
     {
@@ -193,7 +193,7 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \ConfigurationException
+     * @expectedException \InvalidArgumentException
      */
     public function throwsAnExceptionIfTargetOfAddedRouteIsMissing()
     {
@@ -216,7 +216,7 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \ConfigurationException
+     * @expectedException \InvalidArgumentException
      */
     public function throwsAnExceptionIfTargetIsCallableAndAddedRouteHasNoNameDefined()
     {

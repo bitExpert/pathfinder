@@ -22,7 +22,7 @@ use Psr\Http\Message\ServerRequestInterface;
 class Psr7Router extends AbstractRouter
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function match(ServerRequestInterface $request)
     {
@@ -92,8 +92,7 @@ class Psr7Router extends AbstractRouter
     }
 
     /**
-     * {@inheritDoc}
-     * @throws \InvalidArgumentException
+     * {@inheritdoc}
      */
     public function generateUri($routeIdentifier, array $params = [])
     {
@@ -159,7 +158,7 @@ class Psr7Router extends AbstractRouter
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function getPathMatcherForRoute(Route $route)
     {

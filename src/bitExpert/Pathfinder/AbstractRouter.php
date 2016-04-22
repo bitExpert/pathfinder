@@ -81,6 +81,7 @@ abstract class AbstractRouter implements Router
      * @param Route $route
      * @param array $params
      * @param array $requiredParams
+     * @throws \InvalidArgumentException
      */
     protected function validateParams(Route $route, array $params, array $requiredParams)
     {
@@ -143,24 +144,24 @@ abstract class AbstractRouter implements Router
      * if any required configuration is missing. Returns true if everything's fine
      *
      * @param Route $route
-     * @throws \ConfigurationException
+     * @throws \InvalidArgumentException
      */
     protected function validateRoute(Route $route)
     {
         if (null === $route->getPath()) {
-            throw new \ConfigurationException('Route must have defined a path');
+            throw new \InvalidArgumentException('Route must have defined a path');
         }
 
         if (null === $route->getTarget()) {
-            throw new \ConfigurationException('Route must have defined a target');
+            throw new \InvalidArgumentException('Route must have defined a target');
         }
 
         if (0 === count($route->getMethods())) {
-            throw new \ConfigurationException('Route must at least accept one request method');
+            throw new \InvalidArgumentException('Route must at least accept one request method');
         }
 
         if (!is_string($route->getTarget()) && (null === $route->getName())) {
-            throw new \ConfigurationException('If defined route target is not a string a name has to be set');
+            throw new \InvalidArgumentException('If defined route target is not a string a name has to be set');
         }
     }
 
