@@ -343,4 +343,14 @@ class Route
     {
         return strtoupper(trim($method));
     }
+
+    /**
+     * Returns whether the result carries a callable target
+     *
+     * @return bool
+     */
+    public function hasCallableTarget()
+    {
+        return is_callable($this->target);
+    }
 }

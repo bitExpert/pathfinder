@@ -23,13 +23,13 @@ class RoutingResultUnitTest extends \PHPUnit_Framework_TestCase
     public function forSuccessGeneratesValidResult()
     {
         $params = ['param1' => 'value1', 'param2' => 'value2'];
-
-        $result = RoutingResult::forSuccess('mySucceededTarget', $params);
+        $route = Route::get('/test')->to('testAction');
+        $result = RoutingResult::forSuccess($route, $params);
 
         $this->assertTrue($result->succeeded());
         $this->assertFalse($result->failed());
-        $this->assertTrue($result->hasTarget());
-        $this->assertEquals('mySucceededTarget', $result->getTarget());
+        $this->assertTrue($result->hasRoute());
+        $this->assertSame($route, $result->getRoute());
 
         $this->assertSame($params, $result->getParams());
     }
@@ -39,59 +39,39 @@ class RoutingResultUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function getParamsReturnsEmptyArrayIfNotBeenSet()
     {
-        $result = RoutingResult::forSuccess('myTarget');
+        $route = Route::get('/test')->to('testAction');
+        $result = RoutingResult::forSuccess($route);
         $this->assertEquals([], $result->getParams());
     }
 
     /**
      * @test
      */
-    public function forFailureGeneratesValidResultWithoutTarget()
+    public function forFailureGeneratesValidResultWithoutRoute()
     {
-        $result = RoutingResult::forFailure();
+        $result = RoutingResult::forFailure(RoutingResult::FAILED_NOT_FOUND);
 
         $this->assertTrue($result->failed());
+        $this->assertEquals($result->getFailure(), RoutingResult::FAILED_NOT_FOUND);
         $this->assertFalse($result->succeeded());
-        $this->assertFalse($result->hasTarget());
-        $this->assertNull($result->getTarget());
+        $this->assertFalse($result->hasRoute());
+        $this->assertNull($result->getRoute());
         $this->assertSame([], $result->getParams());
     }
 
     /**
      * @test
      */
-    public function forFailureGeneratesValidResultWithTarget()
+    public function forFailureGeneratesValidResultWithRoute()
     {
-        $result = RoutingResult::forFailure('myFallbackTarget');
+        $route = $this->getMock(Route::class);
+        $result = RoutingResult::forFailure(RoutingResult::FAILED_BAD_REQUEST, $route);
 
         $this->assertTrue($result->failed());
+        $this->assertEquals($result->getFailure(), RoutingResult::FAILED_BAD_REQUEST);
         $this->assertFalse($result->succeeded());
-        $this->assertTrue($result->hasTarget());
-        $this->assertEquals('myFallbackTarget', $result->getTarget());
+        $this->assertTrue($result->hasRoute());
+        $this->assertSame($route, $result->getRoute());
         $this->assertSame([], $result->getParams());
-    }
-
-    /**
-     * @test
-     */
-    public function hasCallableTargetReturnsTrueIfTargetCallable()
-    {
-        $result = RoutingResult::forSuccess(function () {
-            // nothing to implement, just for a test
-        });
-
-        $this->assertTrue($result->hasCallableTarget());
-    }
-
-    /**
-     * @test
-     */
-    public function hasCallableTargetReturnsFalseIfTargetCallableOrNotGiven()
-    {
-        $result = RoutingResult::forSuccess('mytarget');
-        $this->assertFalse($result->hasCallableTarget());
-
-        $result = RoutingResult::forFailure();
-        $this->assertFalse($result->hasCallableTarget());
     }
 }

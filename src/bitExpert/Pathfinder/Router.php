@@ -23,6 +23,7 @@ interface Router
      * Adds a route to the routes collection
      *
      * @param Route $route
+     * @throws \InvalidArgumentException
      */
     public function addRoute(Route $route);
 
@@ -30,16 +31,9 @@ interface Router
      * Sets the routes for the router
      *
      * @param array $routes
+     * @throws \InvalidArgumentException
      */
     public function setRoutes(array $routes);
-
-    /**
-     * Sets the default target. It is used to retrieve a target, if
-     * no route can be resolved to a target.
-     *
-     * @param mixed $defaultTarget
-     */
-    public function setDefaultTarget($defaultTarget);
 
     /**
      * Resolves the target using the configured routes. Will return null

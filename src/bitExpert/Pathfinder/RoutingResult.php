@@ -17,18 +17,26 @@ namespace bitExpert\Pathfinder;
  */
 class RoutingResult
 {
+    const FAILED_BAD_REQUEST = 400;
+    const FAILED_NOT_FOUND = 404;
+    const FAILED_METHOD_NOT_ALLOWED = 405;
+
     /**
      * @var bool
      */
     protected $success;
     /**
-     * @var mixed
+     * @var Route
      */
-    protected $target;
+    protected $route;
     /**
      * @var array
      */
     protected $params;
+    /**
+     * @var int
+     */
+    protected $failure;
 
     /**
      * Creates a new {@link bitExpert\Pathfinder\RoutingResult}
@@ -37,7 +45,7 @@ class RoutingResult
      */
     private function __construct()
     {
-        $this->target = null;
+        $this->route = null;
         $this->params = [];
     }
 
@@ -45,15 +53,15 @@ class RoutingResult
      * Factory method to create a {@link \bitExpert\Pathfinder\RoutingResult}
      * if the routing process succeeded
      *
-     * @param mixed $target
+     * @param Route $route
      * @param array $params
      * @return RoutingResult
      */
-    public static function forSuccess($target, array $params = [])
+    public static function forSuccess(Route $route, array $params = [])
     {
         $result = new self();
         $result->success = true;
-        $result->target = $target;
+        $result->route = $route;
         $result->params = $params;
 
         return $result;
@@ -63,26 +71,38 @@ class RoutingResult
      * Factory method to create a new {@link bitExpert\Pathfinder\RoutingResult}
      * Target may be set optionally if any fallback / default target needs to be set
      *
-     * @param mixed | null $target
+     * @param int $failure
+     * @param Route | null $route
      * @return RoutingResult
      */
-    public static function forFailure($target = null)
+    public static function forFailure($failure, Route $route = null)
     {
         $result = new self();
         $result->success = false;
-        $result->target = $target;
+        $result->failure = $failure;
+        $result->route = $route;
 
         return $result;
     }
 
     /**
-     * Returns the target determined by the routing process
+     * Returns the route determined by the routing process.
+     * If success == false, it may carry the first found possible candidate which does not fulfill all criteria
+     * to match exactly
      *
-     * @return mixed
+     * @return Route | null
      */
-    public function getTarget()
+    public function getRoute()
     {
-        return $this->target;
+        return $this->route;
+    }
+
+    /**
+     * Returns the failure reason if success == false
+     */
+    public function getFailure()
+    {
+        return $this->failure;
     }
 
     /**
@@ -116,22 +136,12 @@ class RoutingResult
     }
 
     /**
-     * Returns whether the result carries a target
+     * Returns whether the result carries a route
      *
      * @return bool
      */
-    public function hasTarget()
+    public function hasRoute()
     {
-        return (null !== $this->target);
-    }
-
-    /**
-     * Returns whether the result carries a callable target
-     *
-     * @return bool
-     */
-    public function hasCallableTarget()
-    {
-        return $this->hasTarget() && is_callable($this->target);
+        return (null !== $this->route);
     }
 }
