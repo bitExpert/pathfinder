@@ -11,7 +11,6 @@
 namespace bitExpert\Pathfinder\Middleware;
 
 use bitExpert\Pathfinder\Router;
-use bitExpert\Pathfinder\RoutingResult;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -57,7 +56,7 @@ class RoutingMiddleware
         $result = $this->router->match($request);
 
         if ($next) {
-            $response = $next($request->withAttribute($this->attributeName, $result), $response);
+            $response = $next($request->withAttribute($this->routingResultAttribute, $result), $response);
         }
 
         return $response;
