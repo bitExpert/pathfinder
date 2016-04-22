@@ -60,7 +60,6 @@ class Psr7Router extends AbstractRouter
                 // remove all elements which should not be set in the request,
                 // e.g. the matching url string as well as all numeric items
                 $params = $this->mapParams($urlVars);
-                $identifier = $this->getRouteIdentifier($route);
 
                 if (!$this->matchParams($route, $params)) {
                     $candidates[] = [
