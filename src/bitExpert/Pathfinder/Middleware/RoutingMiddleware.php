@@ -24,25 +24,25 @@ class RoutingMiddleware
     /**
      * @var String
      */
-    protected $attributeName;
+    protected $routingResultAttribute;
 
     /**
      * @param Router $router
      */
-    public function __construct(Router $router)
+    public function __construct(Router $router, $routingResultAttribute)
     {
         $this->router = $router;
-        $this->attributeName = RoutingResult::class;
+        $this->routingResultAttribute = $routingResultAttribute;
     }
 
     /**
-     * Sets the name of the request attribute the routing result will be stored in
+     * Returns the name of the request attribute the routing result will be stored in
      *
-     * @param $attributeName
+     * @return String
      */
-    public function setAttributeName($attributeName)
+    public function getRoutingResultAttribute()
     {
-        $this->attributeName = $attributeName;
+        return $this->routingResultAttribute;
     }
 
     /**
