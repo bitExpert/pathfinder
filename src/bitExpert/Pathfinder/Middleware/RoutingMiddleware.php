@@ -28,6 +28,7 @@ class RoutingMiddleware
 
     /**
      * @param Router $router
+     * @param String $routingResultAttribute
      */
     public function __construct(Router $router, $routingResultAttribute)
     {
