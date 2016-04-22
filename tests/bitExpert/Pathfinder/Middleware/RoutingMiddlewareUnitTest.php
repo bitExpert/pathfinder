@@ -49,13 +49,13 @@ class RoutingMiddlewareUnitTest extends \PHPUnit_Framework_TestCase
         $this->response = new Response();
 
         $this->router = $this->getMock(Router::class);
-        $this->middleware = new RoutingMiddleware($this->router);
+        $this->middleware = new RoutingMiddleware($this->router, RoutingResult::class);
     }
 
     /**
      * @test
      */
-    public function requestContainsRoutingResultInDefaultAttributeAfterRouting()
+    public function requestContainsRoutingResultInRoutingResultAttributeAfterRouting()
     {
         $self = $this;
         $routingResult = RoutingResult::forSuccess('testtarget');
@@ -66,29 +66,6 @@ class RoutingMiddlewareUnitTest extends \PHPUnit_Framework_TestCase
 
         $next = function ($request, $response) use ($routingResult, $self) {
             $self->assertSame($routingResult, $request->getAttribute(RoutingResult::class));
-        };
-
-        $this->middleware->__invoke($this->request, $this->response, $next);
-    }
-
-    /**
-     * @test
-     */
-    public function requestContainsRoutingResultInCustomAttributeAfterRouting()
-    {
-        $self = $this;
-        $routingResult = RoutingResult::forSuccess('testtarget');
-
-        $this->router->expects($this->any())
-            ->method('match')
-            ->will($this->returnValue($routingResult));
-
-        $attributeName = 'customAttributeName';
-
-        $this->middleware->setAttributeName($attributeName);
-
-        $next = function ($request, $response) use ($routingResult, $self, $attributeName) {
-            $self->assertSame($routingResult, $request->getAttribute($attributeName));
         };
 
         $this->middleware->__invoke($this->request, $this->response, $next);
