@@ -14,6 +14,7 @@ namespace bitExpert\Pathfinder\Matcher;
  * Unit test for {@link \bitExpert\Pathfinder\Matcher\ValueSetMatcher}.
  *
  * @covers \bitExpert\Pathfinder\Matcher\ValueSetMatcher
+ * @covers \bitExpert\Pathfinder\Matcher\RegExMatcher
  */
 class ValueSetMatcherUnitTest extends \PHPUnit_Framework_TestCase
 {

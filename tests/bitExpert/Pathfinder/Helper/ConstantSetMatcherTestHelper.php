@@ -1,7 +1,7 @@
 <?php
-namespace bitExpert\Pathfinder\Matcher;
+namespace bitExpert\Pathfinder\Helper;
 
-class ConstantSetMatcherTestClass
+class ConstantSetMatcherTestHelper
 {
     const TEST_CONSTANT_1 = 1;
     const TEST_CONSTANT_2 = 2;

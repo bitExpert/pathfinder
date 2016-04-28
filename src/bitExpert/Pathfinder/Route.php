@@ -157,7 +157,7 @@ class Route
     {
         $methods = is_array($methods) ? $methods : [$methods];
 
-        $instance = clone($this);
+        $instance = clone $this;
         $normalizedMethods = array_map('self::normalizeMethod', $methods);
         $instance->methods = array_unique(array_merge($instance->methods, $normalizedMethods));
 
@@ -174,7 +174,7 @@ class Route
     {
         $methods = is_array($methods) ? $methods : [$methods];
 
-        $instance = clone($this);
+        $instance = clone $this;
         $normalizedMethods = array_map('self::normalizeMethod', $methods);
 
         $instance->methods = array_diff($instance->methods, $normalizedMethods);
@@ -192,9 +192,9 @@ class Route
      */
     public function ifMatches($param, $matchers)
     {
-        $instance = clone($this);
+        $instance = clone $this;
 
-        if (!isset($instance->matchers[$param])) {
+        if (!array_key_exists($param, $instance->matchers)) {
             $instance->matchers[$param] = [];
         }
 
@@ -222,13 +222,11 @@ class Route
      */
     public function whateverMatches($param)
     {
-        if (!isset($this->methods[$param])) {
-            return $this;
+        $instance = clone $this;
+
+        if (array_key_exists($param , $this->matchers)) {
+            unset($instance->matchers[$param]);
         }
-
-        $instance = clone($this);
-
-        unset($instance->methods[$param]);
 
         return $instance;
     }
@@ -241,7 +239,7 @@ class Route
      */
     public function from($path)
     {
-        $instance = clone($this);
+        $instance = clone $this;
         $instance->path = $path;
         return $instance;
     }
@@ -254,7 +252,7 @@ class Route
      */
     public function to($target)
     {
-        $instance = clone($this);
+        $instance = clone $this;
         $instance->target = $target;
         return $instance;
     }
@@ -267,7 +265,7 @@ class Route
      */
     public function named($name)
     {
-        $instance = clone($this);
+        $instance = clone $this;
         $instance->name = $name;
         return $instance;
     }
@@ -279,7 +277,7 @@ class Route
      */
     public function noName()
     {
-        $instance = clone($this);
+        $instance = clone $this;
         $instance->name = null;
         return $instance;
     }

@@ -10,55 +10,36 @@
  */
 namespace bitExpert\Pathfinder\Middleware;
 
-use bitExpert\Pathfinder\Router;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class RoutingMiddleware
+/**
+ * A routing middleware uses a router to determine a routing result which will be stored inside the
+ * routingResultAttribute for further usage
+ */
+interface RoutingMiddleware
 {
-    /**
-     * @var Router
-     */
-    protected $router;
-    /**
-     * @var String
-     */
-    protected $routingResultAttribute;
-
-    /**
-     * @param Router $router
-     * @param String $routingResultAttribute
-     */
-    public function __construct(Router $router, $routingResultAttribute)
-    {
-        $this->router = $router;
-        $this->routingResultAttribute = $routingResultAttribute;
-    }
-
     /**
      * Returns the name of the request attribute the routing result will be stored in
      *
      * @return String
      */
-    public function getRoutingResultAttribute()
-    {
-        return $this->routingResultAttribute;
-    }
+    public function getRoutingResultAttribute();
 
     /**
+     * Returns the configured router
+     *
+     * @return \bitExpert\Pathfinder\Router
+     */
+    public function getRouter();
+
+    /**
+     * PSR-7 middleware signature magic method
+     *
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
      * @param callable|null $next
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null)
-    {
-        $result = $this->router->match($request);
-
-        if ($next) {
-            $response = $next($request->withAttribute($this->routingResultAttribute, $result), $response);
-        }
-
-        return $response;
-    }
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null);
 }

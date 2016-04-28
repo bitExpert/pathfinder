@@ -26,19 +26,13 @@ class Psr7Router extends AbstractRouter
      */
     public function match(ServerRequestInterface $request)
     {
-        $requestUri = $request->getUri();
-
-        // strip query string if provided
-        $requestPath = $requestUri->getPath();
-        $queryStringPos = strpos($requestPath, '?');
-        if (false !== $queryStringPos) {
-            $requestPath = substr($requestPath, 0, $queryStringPos);
-        }
+        $requestPath = $request->getUri()->getPath();
 
         $this->logger->debug(sprintf('Analysing request path "%s"', $requestPath));
 
         $candidates = [];
 
+        /** @var array $routeDefinition */
         foreach ($this->routes as $routeDefinition) {
             $route = $routeDefinition['route'];
             $identifier = $this->getRouteIdentifier($route);
@@ -104,6 +98,7 @@ class Psr7Router extends AbstractRouter
 
         // try to find path for given $target
         $determinedRouteDefinition = null;
+        /** @var array $routeDefinition */
         foreach ($this->routes as $routeDefinition) {
             $route = $routeDefinition['route'];
 

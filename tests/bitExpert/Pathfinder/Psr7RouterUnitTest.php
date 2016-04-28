@@ -18,6 +18,7 @@ use bitExpert\Pathfinder\Matcher\Matcher;
  * Unit test for {@link \bitExpert\Pathfinder\Psr7Router}.
  *
  * @covers \bitExpert\Pathfinder\Psr7Router
+ * @covers \bitExpert\Pathfinder\AbstractRouter
  */
 class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
 {
@@ -58,7 +59,7 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(true));
 
         $this->request = new ServerRequest();
-        $this->router = new Psr7Router('http://localhost');
+        $this->router = new Psr7Router();
     }
 
     /**
@@ -203,6 +204,30 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function returnsAFalsyRoutingResultContainingBadRequestReason()
+    {
+        $paramValue = 'value';
+        $matcher = $this->getMockForAbstractClass(Matcher::class);
+        $matcher->expects($this->once())
+            ->method('__invoke')
+            ->with($paramValue)
+            ->will($this->returnValue(false));
+
+        $this->router->addRoute(
+            Route::get('/[:param]')
+                ->to('action')
+                ->ifMatches('param', $matcher)
+        );
+
+        $this->request = new ServerRequest([], [], '/' . $paramValue, 'GET');
+        $result = $this->router->match($this->request);
+        $this->assertTrue($result->failed());
+        $this->assertEquals(RoutingResult::FAILED_BAD_REQUEST, $result->getFailure());
+    }
+
+    /**
+     * @test
+     */
     public function addsRouteCorrectlyIfValid()
     {
         $route = Route::get('/something')->to('someaction');
@@ -290,6 +315,9 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function willThrowAnExceptionWhenNotAllParamReplacementsAreProvided()
     {
+        $this->router->addRoute(
+            Route::get('/[:sampleId]/[:missingParam]')->to('my.GetActionTokenWithParam')
+        );
         $this->router->generateUri('my.GetActionTokenWithParam', ['sampleId' => 123]);
     }
 
@@ -299,6 +327,16 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function willThrowAnExceptionWhenProvidingNotMatchingParams()
     {
-        $this->router->generateUri('my.GetActionTokenWithUnmatchedParam', ['companyId' => 'abc']);
+        $paramValue = 'abc';
+        $matcher = $this->getMock(Matcher::class);
+        $matcher->expects($this->once())
+            ->method('__invoke')
+            ->with($paramValue)
+            ->will($this->returnValue(false));
+
+        $this->router->addRoute(
+            Route::get('/company/[:companyId]')->to('companyAction')->ifMatches('companyId', $matcher)
+        );
+        $this->router->generateUri('companyAction', ['companyId' => $paramValue]);
     }
 }
