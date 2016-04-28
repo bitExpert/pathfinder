@@ -14,9 +14,6 @@ use bitExpert\Pathfinder\Helper\ConstantSetMatcherTestHelper;
 
 /**
  * Unit test for {@link \bitExpert\Pathfinder\Matcher\ConstantSetMatcher}.
- *
- * @covers \bitExpert\Pathfinder\Matcher\ConstantSetMatcher
- * @covers \bitExpert\Pathfinder\Matcher\RegExMatcher
  */
 class ConstantSetMatcherUnitTest extends \PHPUnit_Framework_TestCase
 {

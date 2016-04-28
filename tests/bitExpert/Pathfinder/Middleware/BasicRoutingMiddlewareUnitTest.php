@@ -20,8 +20,6 @@ use bitExpert\Pathfinder\RoutingResult;
 
 /**
  * Unit test for {@link \bitExpert\Pathfinder\Middleware\BasicRoutingMiddleware}.
- *
- * @covers \bitExpert\Pathfinder\Middleware\BasicRoutingMiddleware
  */
 class BasicRoutingMiddlewareUnitTest extends \PHPUnit_Framework_TestCase
 {
