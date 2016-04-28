@@ -16,9 +16,6 @@ use bitExpert\Pathfinder\Matcher\Matcher;
 
 /**
  * Unit test for {@link \bitExpert\Pathfinder\Psr7Router}.
- *
- * @covers \bitExpert\Pathfinder\Psr7Router
- * @covers \bitExpert\Pathfinder\AbstractRouter
  */
 class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
 {

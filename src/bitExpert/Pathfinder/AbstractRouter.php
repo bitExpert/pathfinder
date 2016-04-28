@@ -27,6 +27,8 @@ abstract class AbstractRouter implements Router
      * Creates a new {@link \bitExpert\Pathfinder\AbstractRouter}.
      *
      * @param Route[] routes
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     public function __construct(array $routes = [])
     {

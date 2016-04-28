@@ -13,7 +13,7 @@ namespace bitExpert\Pathfinder;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * A more sophisticated implementation of an {@link \bitExpert\Pathfinder\RouterInterface}
+ * A more sophisticated implementation of an {@link \bitExpert\Pathfinder\Router\Router}
  * which will map the current request path to a configured target based on some
  * regex magic.
  *
