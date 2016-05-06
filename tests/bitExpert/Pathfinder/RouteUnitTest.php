@@ -123,8 +123,7 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
         $route = Route::create();
         $route2 = $route->to('test');
 
-        $this->assertInstanceOf(Route::class, $route2);
-        $this->assertNotEquals($route->getTarget(), $route2->getTarget());
+        $this->assertNotSame($route, $route2);
     }
 
     /**
@@ -135,8 +134,7 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
         $route = Route::create();
         $route2 = $route->accepting('GET');
 
-        $this->assertInstanceOf(Route::class, $route2);
-        $this->assertNotEquals($route->getMethods(), $route2->getMethods());
+        $this->assertNotSame($route, $route2);
     }
 
     /**
@@ -147,8 +145,7 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
         $route = Route::create(['POST', 'GET']);
         $route2 = $route->refusing('GET');
 
-        $this->assertInstanceOf(Route::class, $route2);
-        $this->assertNotEquals($route->getMethods(), $route2->getMethods());
+        $this->assertNotSame($route, $route2);
     }
 
     /**
@@ -160,8 +157,65 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
         $route = Route::create('/user/[:id]');
         $route2 = $route->ifMatches('id', $matcher);
 
-        $this->assertInstanceOf(Route::class, $route2);
-        $this->assertNotEquals($route->getMatchers(), $route2->getMatchers());
+        $this->assertNotSame($route, $route2);
+    }
+
+    /**
+     * @test
+     */
+    public function removingMatcherIsImmutable()
+    {
+        $matcher = $this->getMock(Matcher::class);
+        $route = Route::create('/user/[:id]')->ifMatches('id', $matcher);
+        $route2 = $route->whateverMatches('id');
+
+        $this->assertNotSame($route, $route2);
+    }
+
+    /**
+     * @test
+     */
+    public function callingNamedSetsNameCorrectly()
+    {
+        $name = 'routeName';
+        $route = Route::create()->named($name);
+
+        $this->assertEquals($name, $route->getName());
+    }
+
+    /**
+     * @test
+     */
+    public function callingNamedIsImmutable()
+    {
+        $name = 'routeName';
+        $route = Route::create();
+        $route2 = $route->named($name);
+
+        $this->assertNotSame($route, $route2);
+    }
+
+    /**
+     * @test
+     */
+    public function callingNoNameUnsetsNameCorrectly()
+    {
+        $name = 'routeName';
+        $route = Route::create()->named($name)->noName();
+
+        $this->assertNull($route->getName());
+    }
+
+    /**
+     * @test
+     */
+    public function callingNoNameIsImmutable()
+    {
+        $name = 'routeName';
+        $route = Route::create()->named($name);
+        $route2 = $route->noName();
+
+        $this->assertNotSame($route, $route2);
     }
 
     /**
@@ -186,6 +240,29 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @expectedException \InvalidArgumentException
+     */
+    public function throwsExceptionIfMatcherIsNotCallable()
+    {
+        Route::get('/user/[:userId]')->to('myAction')->ifMatches('userId', 'notCallable');
+    }
+
+    /**
+     * @test
+     */
+    public function whateverMatchesRemovesMatcher()
+    {
+        $route = Route::get('/[:param]')
+            ->to('myAction')
+            ->ifMatches('id', $this->getMockForAbstractClass(Matcher::class));
+
+        $route = $route->whateverMatches('id');
+
+        $this->assertArrayNotHasKey('id', $route->getMatchers());
+    }
+
+    /**
+     * @test
      */
     public function returnsTrueIfTargetIsCallable()
     {
@@ -194,5 +271,50 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
         });
 
         $this->assertTrue($route->hasCallableTarget());
+    }
+
+
+    /**
+     * @test
+     */
+    public function staticCreationFunctionsCreateCorrectRoutes()
+    {
+        $methods = [
+            'get',
+            'post',
+            'put',
+            'delete',
+            'options',
+            'patch'
+        ];
+
+        $target = 'test';
+        $path = '/[:param]';
+        $matchers = [
+            'param' => $this->getMockForAbstractClass(Matcher::class)
+        ];
+
+        foreach ($methods as $method) {
+            $this->assertStaticRouteCreationFunction($method, $path, $target, $matchers);
+        }
+    }
+
+    /**
+     * Asserts that the static route creation function for given method works
+     *
+     * @param $method
+     * @param string|null $path
+     * @param string|null $target
+     * @param array $matchers
+     */
+    protected function assertStaticRouteCreationFunction($method, $path = null, $target = null, $matchers = [])
+    {
+        /** @var Route $route */
+        $route = forward_static_call(array(Route::class, $method), $path, $target, $matchers);
+        $this->assertInstanceOf(Route::class, $route);
+        $this->assertTrue(in_array(strtoupper($method), $route->getMethods()));
+        $this->assertEquals($path, $route->getPath());
+        $this->assertEquals($target, $route->getTarget());
+        $this->assertEquals($matchers, $route->getMatchers());
     }
 }

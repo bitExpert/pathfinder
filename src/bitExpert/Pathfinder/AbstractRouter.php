@@ -19,10 +19,6 @@ abstract class AbstractRouter implements Router
      */
     protected $logger;
     /**
-     * @var string
-     */
-    protected $baseURL;
-    /**
      * @var Route[]
      */
     protected $routes;
@@ -30,14 +26,14 @@ abstract class AbstractRouter implements Router
     /**
      * Creates a new {@link \bitExpert\Pathfinder\AbstractRouter}.
      *
-     * @param string $baseURL
+     * @param Route[] routes
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
-    public function __construct($baseURL)
+    public function __construct(array $routes = [])
     {
-        // completes the base url with a / if not set in configuration
-        $this->baseURL = rtrim($baseURL, '/') . '/';
         $this->routes = [];
-
+        $this->setRoutes($routes);
         $this->logger = LoggerFactory::getLogger(__CLASS__);
     }
 
@@ -112,6 +108,7 @@ abstract class AbstractRouter implements Router
 
     /**
      * {@inheritDocs}
+     * @throws \InvalidArgumentException
      */
     public function addRoute(Route $route)
     {
@@ -130,6 +127,7 @@ abstract class AbstractRouter implements Router
      * Sets the routes.
      *
      * @param Route[] $routes
+     * @throws \InvalidArgumentException
      */
     public function setRoutes(array $routes)
     {
@@ -148,16 +146,16 @@ abstract class AbstractRouter implements Router
      */
     protected function validateRoute(Route $route)
     {
+        if (0 === count($route->getMethods())) {
+            throw new \InvalidArgumentException('Route must at least accept one request method');
+        }
+
         if (null === $route->getPath()) {
             throw new \InvalidArgumentException('Route must have defined a path');
         }
 
         if (null === $route->getTarget()) {
             throw new \InvalidArgumentException('Route must have defined a target');
-        }
-
-        if (0 === count($route->getMethods())) {
-            throw new \InvalidArgumentException('Route must at least accept one request method');
         }
 
         if (!is_string($route->getTarget()) && (null === $route->getName())) {

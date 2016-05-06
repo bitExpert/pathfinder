@@ -8,20 +8,20 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace bitExpert\Pathfinder;
+namespace bitExpert\Pathfinder\Middleware;
 
-use bitExpert\Pathfinder\Middleware\RoutingMiddleware;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
+use bitExpert\Pathfinder\Route;
+use bitExpert\Pathfinder\Router;
+use bitExpert\Pathfinder\RoutingResult;
 
 /**
- * Unit test for {@link \bitExpert\Pathfinder\Middleware\RoutingMiddleware}.
- *
- * @covers \bitExpert\Pathfinder\Middleware\RoutingMiddleware
+ * Unit test for {@link \bitExpert\Pathfinder\Middleware\BasicRoutingMiddleware}.
  */
-class RoutingMiddlewareUnitTest extends \PHPUnit_Framework_TestCase
+class BasicRoutingMiddlewareUnitTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ServerRequestInterface
@@ -48,8 +48,8 @@ class RoutingMiddlewareUnitTest extends \PHPUnit_Framework_TestCase
         $this->request = new ServerRequest();
         $this->response = new Response();
 
-        $this->router = $this->getMock(Router::class);
-        $this->middleware = new RoutingMiddleware($this->router, RoutingResult::class);
+        $this->router = $this->getMockForAbstractClass(Router::class);
+        $this->middleware = new BasicRoutingMiddleware($this->router, RoutingResult::class);
     }
 
     /**
@@ -70,5 +70,21 @@ class RoutingMiddlewareUnitTest extends \PHPUnit_Framework_TestCase
         };
 
         $this->middleware->__invoke($this->request, $this->response, $next);
+    }
+
+    /**
+     * @test
+     */
+    public function returnsRouterCorrectly()
+    {
+        $this->assertSame($this->router, $this->middleware->getRouter());
+    }
+
+    /**
+     * @test
+     */
+    public function returnsRoutingResultAttributeCorrectly()
+    {
+        $this->assertEquals(RoutingResult::class, $this->middleware->getRoutingResultAttribute());
     }
 }

@@ -10,10 +10,10 @@
  */
 namespace bitExpert\Pathfinder\Matcher;
 
+use bitExpert\Pathfinder\Helper\ConstantSetMatcherTestHelper;
+
 /**
  * Unit test for {@link \bitExpert\Pathfinder\Matcher\ConstantSetMatcher}.
- *
- * @covers \bitExpert\Pathfinder\Matcher\ConstantSetMatcher
  */
 class ConstantSetMatcherUnitTest extends \PHPUnit_Framework_TestCase
 {
@@ -22,12 +22,12 @@ class ConstantSetMatcherUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function matchesAgainstValidValuesOfMatchingPattern()
     {
-        $matcher = new ConstantSetMatcher(ConstantSetMatcherTestClass::class, 'TEST_CONSTANT_*');
+        $matcher = new ConstantSetMatcher(ConstantSetMatcherTestHelper::class, 'TEST_CONSTANT_*');
         $this->assertTrue($matcher(1));
         $this->assertTrue($matcher(2));
         $this->assertTrue($matcher(3));
 
-        $matcher = new ConstantSetMatcher(ConstantSetMatcherTestClass::class, '*_CONSTANT_*');
+        $matcher = new ConstantSetMatcher(ConstantSetMatcherTestHelper::class, '*_CONSTANT_*');
         $this->assertTrue($matcher(1));
         $this->assertTrue($matcher(2));
         $this->assertTrue($matcher(3));
@@ -42,14 +42,14 @@ class ConstantSetMatcherUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function doesNotMatchAgainstInvalidValueIfPatternMatches()
     {
-        $matcher = new ConstantSetMatcher(ConstantSetMatcherTestClass::class, 'TEST_CONSTANT_*');
+        $matcher = new ConstantSetMatcher(ConstantSetMatcherTestHelper::class, 'TEST_CONSTANT_*');
 
         $this->assertFalse($matcher(4));
         $this->assertFalse($matcher('one'));
         $this->assertFalse($matcher('two'));
         $this->assertFalse($matcher('three'));
 
-        $matcher = new ConstantSetMatcher(ConstantSetMatcherTestClass::class, '*_CONSTANT_*');
+        $matcher = new ConstantSetMatcher(ConstantSetMatcherTestHelper::class, '*_CONSTANT_*');
         $this->assertFalse($matcher('four'));
     }
 
@@ -58,7 +58,7 @@ class ConstantSetMatcherUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function doesNotMatchAgainstValidValuesIfPatternDoesNotMatch()
     {
-        $matcher = new ConstantSetMatcher(ConstantSetMatcherTestClass::class, '*_CONST_*');
+        $matcher = new ConstantSetMatcher(ConstantSetMatcherTestHelper::class, '*_CONST_*');
 
         $this->assertFalse($matcher(1));
         $this->assertFalse($matcher(2));

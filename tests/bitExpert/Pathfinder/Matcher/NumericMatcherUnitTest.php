@@ -12,8 +12,6 @@ namespace bitExpert\Pathfinder\Matcher;
 
 /**
  * Unit test for {@link \bitExpert\Pathfinder\Matcher\NumericMatcher}.
- *
- * @covers \bitExpert\Pathfinder\Matcher\NumericMatcher
  */
 class NumericMatcherUnitTest extends \PHPUnit_Framework_TestCase
 {
