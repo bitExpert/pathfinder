@@ -224,7 +224,7 @@ class Route
     {
         $instance = clone $this;
 
-        if (array_key_exists($param , $this->matchers)) {
+        if (array_key_exists($param, $this->matchers)) {
             unset($instance->matchers[$param]);
         }
 

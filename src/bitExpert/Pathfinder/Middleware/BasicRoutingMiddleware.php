@@ -49,7 +49,7 @@ class BasicRoutingMiddleware implements RoutingMiddleware
      */
     public function getRouter()
     {
-       return $this->router;
+        return $this->router;
     }
 
     /**

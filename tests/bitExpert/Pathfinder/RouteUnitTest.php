@@ -252,7 +252,10 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function whateverMatchesRemovesMatcher()
     {
-        $route = Route::get('/[:param]')->to('myAction')->ifMatches('id', $this->getMockForAbstractClass(Matcher::class));
+        $route = Route::get('/[:param]')
+            ->to('myAction')
+            ->ifMatches('id', $this->getMockForAbstractClass(Matcher::class));
+
         $route = $route->whateverMatches('id');
 
         $this->assertArrayNotHasKey('id', $route->getMatchers());
@@ -306,6 +309,7 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
      */
     protected function assertStaticRouteCreationFunction($method, $path = null, $target = null, $matchers = [])
     {
+        /** @var Route $route */
         $route = forward_static_call(array(Route::class, $method), $path, $target, $matchers);
         $this->assertInstanceOf(Route::class, $route);
         $this->assertTrue(in_array(strtoupper($method), $route->getMethods()));
