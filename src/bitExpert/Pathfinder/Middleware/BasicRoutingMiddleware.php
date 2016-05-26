@@ -27,6 +27,8 @@ class BasicRoutingMiddleware implements RoutingMiddleware
     protected $routingResultAttribute;
 
     /**
+     * Creates a new {@link \bitExpert\Pathfinder\Middleware\BasicRoutingMiddleware}.
+     *
      * @param Router $router
      * @param String $routingResultAttribute
      */
@@ -71,8 +73,8 @@ class BasicRoutingMiddleware implements RoutingMiddleware
     }
 
     /**
-     * Offers possibility to manipulate the request according to routing result
-     * Returns a new {@link \Psr\Http\Message\ServerRequestInterface}
+     * Offers possibility to manipulate the request according to routing result.
+     * Returns a new {@link \Psr\Http\Message\ServerRequestInterface}.
      *
      * @param ServerRequestInterface $request
      * @param RoutingResult $routingResult

@@ -14,27 +14,28 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * A routing middleware uses a router to determine a routing result which will be stored inside the
- * routingResultAttribute for further usage
+ * A routing middleware uses a router to determine a routing result which
+ * will be stored inside the routingResultAttribute for further usage.
  */
 interface RoutingMiddleware
 {
     /**
-     * Returns the name of the request attribute the routing result will be stored in
+     * Returns the name of the request attribute the routing result will be
+     * stored in.
      *
      * @return String
      */
     public function getRoutingResultAttribute();
 
     /**
-     * Returns the configured router
+     * Returns the configured router.
      *
      * @return \bitExpert\Pathfinder\Router
      */
     public function getRouter();
 
     /**
-     * PSR-7 middleware signature magic method
+     * PSR-7 middleware signature magic method.
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response

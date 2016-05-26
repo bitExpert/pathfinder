@@ -18,7 +18,7 @@ namespace bitExpert\Pathfinder\Matcher;
 interface Matcher
 {
     /**
-     * Function to test the given value against implemented criteria
+     * Function to test the given value against implemented criteria.
      *
      * @param mixed $value
      * @return bool

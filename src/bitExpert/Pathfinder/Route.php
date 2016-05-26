@@ -56,7 +56,7 @@ class Route
     }
 
     /**
-     * Creates a new route instance
+     * Creates a new route instance.
      *
      * @param array $methods
      * @param string|null $path
@@ -70,7 +70,7 @@ class Route
     }
 
     /**
-     * Creates a new GET accepting route
+     * Creates a new GET accepting route.
      *
      * @param string|null $path
      * @param mixed|null $target
@@ -83,7 +83,7 @@ class Route
     }
 
     /**
-     * Creates a new POST accepting route
+     * Creates a new POST accepting route.
      *
      * @param string|null $path
      * @param mixed|null $target
@@ -96,7 +96,7 @@ class Route
     }
 
     /**
-     * Creates a new PUT accepting route
+     * Creates a new PUT accepting route.
      *
      * @param string|null $path
      * @param mixed|null $target
@@ -109,7 +109,7 @@ class Route
     }
 
     /**
-     * Creates a new DELETE accepting route
+     * Creates a new DELETE accepting route.
      *
      * @param string|null $path
      * @param mixed|null $target
@@ -122,7 +122,7 @@ class Route
     }
 
     /**
-     * Creates a new OPTIONS accepting route
+     * Creates a new OPTIONS accepting route.
      *
      * @param string|null $path
      * @param mixed|null $target
@@ -135,7 +135,7 @@ class Route
     }
 
     /**
-     * Creates a new PATCH accepting route
+     * Creates a new PATCH accepting route.
      *
      * @param string|null $path
      * @param mixed|null $target
@@ -148,7 +148,7 @@ class Route
     }
 
     /**
-     * Sets the method(s) which the route should accept
+     * Sets the method(s) which the route should accept.
      *
      * @param array|string $methods The HTTP method(s) the route should handle
      * @return Route
@@ -165,7 +165,8 @@ class Route
     }
 
     /**
-     * Removes given method(s) from the set of methods the route should handle
+     * Removes given method(s) from the set of methods the
+     * route should handle.
      *
      * @param array|string $methods The HTTP method(s) the route should no longer handle
      * @return Route
@@ -183,7 +184,8 @@ class Route
     }
 
     /**
-     * Sets matcher(s) which the given param should match for the route to be active
+     * Sets matcher(s) which the given param should match
+     * for the route to be active.
      *
      * @param string $param The param name to set the matcher(s) for
      * @param callable|callable[] The matcher or array of matchers for the param
@@ -215,7 +217,8 @@ class Route
     }
 
     /**
-     * Returns a route having removed all formerly set matchers for the param with given name
+     * Returns a route having removed all formerly set matchers
+     * for the param with given name.
      *
      * @param string $param The name of the param all matchers should be removed for
      * @return Route
@@ -232,7 +235,7 @@ class Route
     }
 
     /**
-     * Returns the route with a new source configuration
+     * Returns the route with a new source configuration.
      *
      * @param string $path The new path
      * @return Route
@@ -245,7 +248,7 @@ class Route
     }
 
     /**
-     * Returns the route with a new target
+     * Returns the route with a new target.
      *
      * @param mixed $target The new target
      * @return Route
@@ -258,7 +261,7 @@ class Route
     }
 
     /**
-     * Returns a new instance of the route carrying the given name
+     * Returns a new instance of the route carrying the given name.
      *
      * @param $name
      * @return Route
@@ -271,7 +274,7 @@ class Route
     }
 
     /**
-     * Returns a new instance of the route having the name unset
+     * Returns a new instance of the route having the name unset.
      *
      * @return Route
      */
@@ -303,7 +306,7 @@ class Route
     }
 
     /**
-     * Returns the methods accepted by this route
+     * Returns the methods accepted by this route.
      *
      * @return array
      */
@@ -313,7 +316,7 @@ class Route
     }
 
     /**
-     * Returns defined matchers for params of the route
+     * Returns defined matchers for params of the route.
      *
      * @return array
      */
@@ -323,7 +326,7 @@ class Route
     }
 
     /**
-     * Returns the name of the route
+     * Returns the name of the route.
      *
      * @return string
      */
@@ -333,7 +336,8 @@ class Route
     }
 
     /**
-     * Helper function to normalize HTTP request methods (trimmed to uppercase)
+     * Helper function to normalize HTTP request methods
+     * (trimmed to uppercase).
      *
      * @return callable
      */
@@ -343,7 +347,7 @@ class Route
     }
 
     /**
-     * Returns whether the result carries a callable target
+     * Returns whether the result carries a callable target.
      *
      * @return bool
      */
