@@ -24,7 +24,7 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function methodSetByConstructorGetsReturnedInCapitalLetters()
     {
-        $route = new Route('get');
+        $route = Route::create('get');
         $this->assertSame(['GET'], $route->getMethods());
 
         $route = Route::create('get', '/', 'test');
@@ -54,7 +54,7 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function pathSetByConstructorGetsReturnedAsIs()
     {
-        $route = new Route('GET', '/info');
+        $route = Route::create('get', '/info');
         $this->assertSame('/info', $route->getPath());
     }
 
@@ -81,7 +81,7 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function targetSetByConstructorGetsReturnedAsIs()
     {
-        $route = new Route('get', '/info', 'test');
+        $route = Route::create('get', '/info', 'test');
         $this->assertSame('test', $route->getTarget());
     }
 
