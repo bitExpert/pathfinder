@@ -61,12 +61,11 @@ class Route
      * @param array $methods
      * @param string|null $path
      * @param mixed|null $target
-     * @param callable[] $matchers Array key is the name of the path variable, Array value an array of matchers
      * @return Route
      */
-    public static function create($methods = [], $path = null, $target = null, array $matchers = [])
+    public static function create($methods = [], $path = null, $target = null)
     {
-        return new static($methods, $path, $target, $matchers);
+        return new static($methods, $path, $target);
     }
 
     /**
@@ -74,12 +73,11 @@ class Route
      *
      * @param string|null $path
      * @param mixed|null $target
-     * @param callable[] $matchers The matcher or array of matchers for the param
      * @return Route
      */
-    public static function get($path = null, $target = null, array $matchers = [])
+    public static function get($path = null, $target = null)
     {
-        return self::create('GET', $path, $target, $matchers);
+        return self::create('GET', $path, $target);
     }
 
     /**
@@ -87,12 +85,11 @@ class Route
      *
      * @param string|null $path
      * @param mixed|null $target
-     * @param callable[] $matchers The matcher or array of matchers for the param
      * @return Route
      */
-    public static function post($path = null, $target = null, array $matchers = [])
+    public static function post($path = null, $target = null)
     {
-        return self::create('POST', $path, $target, $matchers);
+        return self::create('POST', $path, $target);
     }
 
     /**
@@ -100,12 +97,11 @@ class Route
      *
      * @param string|null $path
      * @param mixed|null $target
-     * @param callable[] $matchers The matcher or array of matchers for the param
      * @return Route
      */
-    public static function put($path = null, $target = null, array $matchers = [])
+    public static function put($path = null, $target = null)
     {
-        return self::create('PUT', $path, $target, $matchers);
+        return self::create('PUT', $path, $target);
     }
 
     /**
@@ -113,12 +109,11 @@ class Route
      *
      * @param string|null $path
      * @param mixed|null $target
-     * @param callable[] $matchers The matcher or array of matchers for the param
      * @return Route
      */
-    public static function delete($path = null, $target = null, array $matchers = [])
+    public static function delete($path = null, $target = null)
     {
-        return self::create('DELETE', $path, $target, $matchers);
+        return self::create('DELETE', $path, $target);
     }
 
     /**
@@ -129,9 +124,9 @@ class Route
      * @param callable[] $matchers The matcher or array of matchers for the param
      * @return Route
      */
-    public static function options($path = null, $target = null, array $matchers = [])
+    public static function options($path = null, $target = null)
     {
-        return self::create('OPTIONS', $path, $target, $matchers);
+        return self::create('OPTIONS', $path, $target);
     }
 
     /**
@@ -139,12 +134,11 @@ class Route
      *
      * @param string|null $path
      * @param mixed|null $target
-     * @param callable[] $matchers The matcher or array of matchers for the param
      * @return Route
      */
-    public static function patch($path = null, $target = null, array $matchers = [])
+    public static function patch($path = null, $target = null)
     {
-        return self::create('PATCH', $path, $target, $matchers);
+        return self::create('PATCH', $path, $target);
     }
 
     /**

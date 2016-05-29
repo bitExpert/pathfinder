@@ -290,12 +290,8 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
 
         $target = 'test';
         $path = '/[:param]';
-        $matchers = [
-            'param' => $this->getMockForAbstractClass(Matcher::class)
-        ];
-
         foreach ($methods as $method) {
-            $this->assertStaticRouteCreationFunction($method, $path, $target, $matchers);
+            $this->assertStaticRouteCreationFunction($method, $path, $target);
         }
     }
 
