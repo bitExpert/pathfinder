@@ -230,8 +230,7 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
                 ->to('my.GetActionTokenWithFunctionMatcher')
                 ->ifMatches('orderId', function ($orderId) {
                     return ((int) $orderId > 0);
-                }
-                );
+                });
         } catch (\Exception $e) {
             $thrown = true;
         }
@@ -269,8 +268,7 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
     {
         $route = Route::get('/users')->to(function () {
             // do nothing
-        }
-        );
+        });
 
         $this->assertTrue($route->hasCallableTarget());
     }
