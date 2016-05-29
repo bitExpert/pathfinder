@@ -229,8 +229,9 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
             Route::get('/order/[:orderId]')
                 ->to('my.GetActionTokenWithFunctionMatcher')
                 ->ifMatches('orderId', function ($orderId) {
-                    return ((int)$orderId > 0);
-                });
+                    return ((int) $orderId > 0);
+                }
+                );
         } catch (\Exception $e) {
             $thrown = true;
         }
@@ -267,8 +268,9 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
     public function returnsTrueIfTargetIsCallable()
     {
         $route = Route::get('/users')->to(function () {
-           // do nothing
-        });
+            // do nothing
+        }
+        );
 
         $this->assertTrue($route->hasCallableTarget());
     }
@@ -276,23 +278,14 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @dataProvider httpMethodDataprovider
      */
-    public function staticCreationFunctionsCreateCorrectRoutes()
+    public function staticCreationFunctionsCreateCorrectRoutes($method)
     {
-        $methods = [
-            'get',
-            'post',
-            'put',
-            'delete',
-            'options',
-            'patch'
-        ];
-
         $target = 'test';
         $path = '/[:param]';
-        foreach ($methods as $method) {
-            $this->assertStaticRouteCreationFunction($method, $path, $target);
-        }
+
+        $this->assertStaticRouteCreationFunction($method, $path, $target);
     }
 
     /**
@@ -312,5 +305,22 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($path, $route->getPath());
         $this->assertEquals($target, $route->getTarget());
         $this->assertEquals($matchers, $route->getMatchers());
+    }
+
+    /**
+     * Dataprovider to return the http methods to use in the different testcases.
+     *
+     * @return array
+     */
+    public function httpMethodDataprovider()
+    {
+        return [
+            ['get'],
+            ['post'],
+            ['put'],
+            ['delete'],
+            ['options'],
+            ['patch']
+        ];
     }
 }
