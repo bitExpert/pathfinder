@@ -39,9 +39,9 @@ class RoutingResult
     protected $failure;
 
     /**
-     * Creates a new {@link bitExpert\Pathfinder\RoutingResult}
-
-     * Constructor is set private to enforce usage of factory methods for success or failure
+     * Creates a new {@link bitExpert\Pathfinder\RoutingResult}.
+     *
+     * Constructor is set private to enforce usage of factory methods for success or failure.
      */
     private function __construct()
     {
@@ -51,7 +51,7 @@ class RoutingResult
 
     /**
      * Factory method to create a {@link \bitExpert\Pathfinder\RoutingResult}
-     * if the routing process succeeded
+     * if the routing process succeeded.
      *
      * @param Route $route
      * @param array $params
@@ -68,8 +68,9 @@ class RoutingResult
     }
 
     /**
-     * Factory method to create a new {@link bitExpert\Pathfinder\RoutingResult}
-     * Target may be set optionally if any fallback / default target needs to be set
+     * Factory method to create a new {@link bitExpert\Pathfinder\RoutingResult}.
+     *
+     * Target may be set optionally if any fallback / default target needs to be set.
      *
      * @param int $failure
      * @param Route | null $route
@@ -87,8 +88,9 @@ class RoutingResult
 
     /**
      * Returns the route determined by the routing process.
-     * If success == false, it may carry the first found possible candidate which does not fulfill all criteria
-     * to match exactly
+     *
+     * If success == false, it may carry the first found possible candidate
+     * which does not fulfill all criteria to match exactly.
      *
      * @return Route | null
      */
@@ -98,7 +100,7 @@ class RoutingResult
     }
 
     /**
-     * Returns the failure reason if success == false
+     * Returns the failure reason if success == false.
      */
     public function getFailure()
     {
@@ -106,7 +108,7 @@ class RoutingResult
     }
 
     /**
-     * Returns the params key/value pairs determined by the routing process
+     * Returns the params key/value pairs determined by the routing process.
      *
      * @return array
      */
@@ -116,7 +118,7 @@ class RoutingResult
     }
 
     /**
-     * Returns whether the routing process succeeded
+     * Returns whether the routing process succeeded.
      *
      * @return mixed
      */
@@ -126,7 +128,7 @@ class RoutingResult
     }
 
     /**
-     * Returns whether the routing process failed
+     * Returns whether the routing process failed.
      *
      * @return bool
      */
@@ -136,7 +138,7 @@ class RoutingResult
     }
 
     /**
-     * Returns whether the result carries a route
+     * Returns whether the result carries a route.
      *
      * @return bool
      */

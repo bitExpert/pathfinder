@@ -39,7 +39,7 @@ abstract class AbstractRouter implements Router
 
     /**
      * Matches given variables against given matchers and returns
-     * if all vars pass all matchers
+     * if all vars pass all matchers.
      *
      * @param Route $route The route to test the values against
      * @param array $params The names variables and values
@@ -72,7 +72,8 @@ abstract class AbstractRouter implements Router
     }
 
     /**
-     * Validates given params against the required ones and checks for matcher violations afterwards
+     * Validates given params against the required ones and
+     * checks for matcher violations afterwards.
      *
      * @param Route $route
      * @param array $params
@@ -107,8 +108,7 @@ abstract class AbstractRouter implements Router
     }
 
     /**
-     * {@inheritDocs}
-     * @throws \InvalidArgumentException
+     * {@inheritdoc}
      */
     public function addRoute(Route $route)
     {
@@ -124,10 +124,7 @@ abstract class AbstractRouter implements Router
     }
 
     /**
-     * Sets the routes.
-     *
-     * @param Route[] $routes
-     * @throws \InvalidArgumentException
+     * {@inheritdoc}
      */
     public function setRoutes(array $routes)
     {
@@ -138,8 +135,9 @@ abstract class AbstractRouter implements Router
     }
 
     /**
-     * Validates given route for configuration correctness and throws \ConfigurationException
-     * if any required configuration is missing. Returns true if everything's fine
+     * Validates given route for configuration correctness and throws a
+     * {@link \InvalidArgumentException} if any required configuration
+     * is missing. Returns true if everything's fine.
      *
      * @param Route $route
      * @throws \InvalidArgumentException
@@ -164,7 +162,7 @@ abstract class AbstractRouter implements Router
     }
 
     /**
-     * Returns the identifier string for given route
+     * Returns the identifier string for given route.
      *
      * @param Route $route
      * @return string
@@ -175,7 +173,8 @@ abstract class AbstractRouter implements Router
     }
 
     /**
-     * Returns the internal identifier of the given route used for matching the request
+     * Returns the internal identifier of the given route
+     * used for matching the request.
      *
      * @param Route $route
      * @return mixed

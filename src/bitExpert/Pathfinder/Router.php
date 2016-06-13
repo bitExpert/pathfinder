@@ -20,7 +20,7 @@ use Psr\Http\Message\ServerRequestInterface;
 interface Router
 {
     /**
-     * Adds a route to the routes collection
+     * Adds a route to the routes collection.
      *
      * @param Route $route
      * @throws \InvalidArgumentException
@@ -28,7 +28,8 @@ interface Router
     public function addRoute(Route $route);
 
     /**
-     * Sets the routes for the router
+     * Sets the routes for the router. Will discard all previous
+     * defined routes!
      *
      * @param array $routes
      * @throws \InvalidArgumentException
@@ -37,8 +38,7 @@ interface Router
 
     /**
      * Resolves the target using the configured routes. Will return null
-     * in case no target could be found and no default target
-     * was provided.
+     * in case no target could be found and no default target was provided.
      *
      * @param ServerRequestInterface $request
      * @return RoutingResult

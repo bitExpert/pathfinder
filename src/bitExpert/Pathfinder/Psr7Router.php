@@ -13,9 +13,8 @@ namespace bitExpert\Pathfinder;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * A more sophisticated implementation of an {@link \bitExpert\Pathfinder\Router\Router}
- * which will map the current request path to a configured target based on some
- * regex magic.
+ * Implementation of an {@link \bitExpert\Pathfinder\Router\Router} which will map
+ * the current request path to a configured target.
  *
  * @api
  */
@@ -133,7 +132,7 @@ class Psr7Router extends AbstractRouter
     }
 
     /**
-     * Maps resulting params of a regex match to name=>value array
+     * Maps resulting params of a regex match to name=>value array.
      *
      * @param array $params
      * @return array
