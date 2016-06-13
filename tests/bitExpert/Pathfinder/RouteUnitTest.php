@@ -24,7 +24,7 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function methodSetByConstructorGetsReturnedInCapitalLetters()
     {
-        $route = new Route('get');
+        $route = Route::create('get');
         $this->assertSame(['GET'], $route->getMethods());
 
         $route = Route::create('get', '/', 'test');
@@ -54,7 +54,7 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function pathSetByConstructorGetsReturnedAsIs()
     {
-        $route = new Route('GET', '/info');
+        $route = Route::create('get', '/info');
         $this->assertSame('/info', $route->getPath());
     }
 
@@ -81,7 +81,7 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function targetSetByConstructorGetsReturnedAsIs()
     {
-        $route = new Route('get', '/info', 'test');
+        $route = Route::create('get', '/info', 'test');
         $this->assertSame('test', $route->getTarget());
     }
 
@@ -229,7 +229,7 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
             Route::get('/order/[:orderId]')
                 ->to('my.GetActionTokenWithFunctionMatcher')
                 ->ifMatches('orderId', function ($orderId) {
-                    return ((int)$orderId > 0);
+                    return ((int) $orderId > 0);
                 });
         } catch (\Exception $e) {
             $thrown = true;
@@ -267,7 +267,7 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
     public function returnsTrueIfTargetIsCallable()
     {
         $route = Route::get('/users')->to(function () {
-           // do nothing
+            // do nothing
         });
 
         $this->assertTrue($route->hasCallableTarget());
@@ -276,27 +276,14 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @dataProvider httpMethodDataprovider
      */
-    public function staticCreationFunctionsCreateCorrectRoutes()
+    public function staticCreationFunctionsCreateCorrectRoutes($method)
     {
-        $methods = [
-            'get',
-            'post',
-            'put',
-            'delete',
-            'options',
-            'patch'
-        ];
-
         $target = 'test';
         $path = '/[:param]';
-        $matchers = [
-            'param' => $this->getMockForAbstractClass(Matcher::class)
-        ];
 
-        foreach ($methods as $method) {
-            $this->assertStaticRouteCreationFunction($method, $path, $target, $matchers);
-        }
+        $this->assertStaticRouteCreationFunction($method, $path, $target);
     }
 
     /**
@@ -316,5 +303,22 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($path, $route->getPath());
         $this->assertEquals($target, $route->getTarget());
         $this->assertEquals($matchers, $route->getMatchers());
+    }
+
+    /**
+     * Dataprovider to return the http methods to use in the different testcases.
+     *
+     * @return array
+     */
+    public function httpMethodDataprovider()
+    {
+        return [
+            ['get'],
+            ['post'],
+            ['put'],
+            ['delete'],
+            ['options'],
+            ['patch']
+        ];
     }
 }
