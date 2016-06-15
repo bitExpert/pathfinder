@@ -65,11 +65,11 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
     public function noMatchingMethodWillReturnMethodNotAllowedFailureAndFirstCandidate()
     {
         $this->request = new ServerRequest([], [], '/users', 'HEAD');
-        $route = Route::get('/users')->to('my.GetActionToken');
+        $route = RouteBuilder::route()->get('/users')->to('my.GetActionToken')->build();
         $this->router->setRoutes(
             [
                 $route,
-                Route::post('/users')->to('my.PostActionToken')
+                RouteBuilder::route()->post('/users')->to('my.PostActionToken')->build()
             ]
         );
         $result = $this->router->match($this->request);
@@ -96,7 +96,7 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function matchingRouteWithoutParamsReturnsRoute()
     {
-        $route = Route::get('/users')->to('userListAction');
+        $route = RouteBuilder::route()->get('/users')->to('userListAction')->build();
         $this->router->addRoute($route);
 
         $this->request = new ServerRequest([], [], '/users', 'GET');
@@ -111,7 +111,7 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function matchingRouteWithParamsReturnsRouteAndParams()
     {
-        $route = Route::get('/user/[:userId]')->to('userDetailsAction');
+        $route = RouteBuilder::route()->get('/user/[:userId]')->to('userDetailsAction')->build();
 
         $this->router->addRoute($route);
 
@@ -131,9 +131,11 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function returnsBadRequestIfMatcherDoesNotMatchAndReturnsCandidate()
     {
-        $route = Route::get('/company/[:companyId]')
+        $route = RouteBuilder::route()
+            ->get('/company/[:companyId]')
             ->to('my.GetActionTokenWithUnmatchedParam')
-            ->ifMatches('companyId', $this->notMatchingMatcher);
+            ->ifMatches('companyId', $this->notMatchingMatcher)
+            ->build();
 
         $this->router->addRoute($route);
 
@@ -150,9 +152,11 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function usesRouteIfMatcherDoesMatch()
     {
-        $route = Route::get('/offer/[:offerId]')
+        $route = RouteBuilder::route()
+            ->get('/offer/[:offerId]')
             ->to('my.GetActionTokenWithMatchedParam')
-            ->ifMatches('offerId', $this->matchingMatcher);
+            ->ifMatches('offerId', $this->matchingMatcher)
+            ->build();
 
         $this->router->addRoute($route);
         $this->request = new ServerRequest([], [], '/offer/123', 'GET');
@@ -173,33 +177,6 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
-     */
-    public function throwsAnExceptionIfAddedRouteHasNoMethodDefined()
-    {
-        $this->router->addRoute(Route::create()->to('someaction'));
-    }
-
-    /**
-     * @test
-     * @expectedException \InvalidArgumentException
-     */
-    public function throwsAnExceptionIfPathOfAddedRouteIsMissing()
-    {
-        $this->router->addRoute(Route::get()->to('someaction'));
-    }
-
-    /**
-     * @test
-     * @expectedException \InvalidArgumentException
-     */
-    public function throwsAnExceptionIfTargetOfAddedRouteIsMissing()
-    {
-        $this->router->addRoute(Route::get('/something'));
-    }
-
-    /**
-     * @test
      */
     public function returnsAFalsyRoutingResultContainingBadRequestReason()
     {
@@ -211,9 +188,11 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(false));
 
         $this->router->addRoute(
-            Route::get('/[:param]')
+            RouteBuilder::route()
+                ->get('/[:param]')
                 ->to('action')
                 ->ifMatches('param', $matcher)
+                ->build()
         );
 
         $this->request = new ServerRequest([], [], '/' . $paramValue, 'GET');
@@ -227,7 +206,7 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function addsRouteCorrectlyIfValid()
     {
-        $route = Route::get('/something')->to('someaction');
+        $route = RouteBuilder::route()->get('/something')->to('someaction')->build();
         $this->router->addRoute($route);
         $this->request = new ServerRequest([], [], '/something', 'GET');
 
@@ -242,9 +221,9 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function throwsAnExceptionIfTargetIsCallableAndAddedRouteHasNoNameDefined()
     {
-        $this->router->addRoute(Route::get('/something')->to(function () {
+        $this->router->addRoute(RouteBuilder::route()->get('/something')->to(function () {
             // do nothing
-        }));
+        })->build());
     }
 
     /**
@@ -262,7 +241,7 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
     public function returnsTargetWhenMatchingRouteIsFound()
     {
         $routeUrl = '/users';
-        $route = Route::get($routeUrl)->to('my.GetActionToken');
+        $route = RouteBuilder::route()->get($routeUrl)->to('my.GetActionToken')->build();
         $this->router->addRoute($route);
         $url = $this->router->generateUri('my.GetActionToken');
 
@@ -274,7 +253,7 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function paramsAreIgnoredForRoutesWithoutAnyParams()
     {
-        $route = Route::get('/users')->to('my.GetActionToken');
+        $route = RouteBuilder::route()->get('/users')->to('my.GetActionToken')->build();
         $this->router->addRoute($route);
         $url = $this->router->generateUri('my.GetActionToken', ['sampleId' => 456]);
 
@@ -286,7 +265,7 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function routeParamPlaceholdersWillBeReplaced()
     {
-        $route = Route::get('/user/[:userId]')->to('my.GetActionTokenWithParam');
+        $route = RouteBuilder::route()->get('/user/[:userId]')->to('my.GetActionTokenWithParam')->build();
         $this->router->addRoute($route);
         $url = $this->router->generateUri('my.GetActionTokenWithParam', ['userId' => 123]);
 
@@ -298,7 +277,7 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function paramsNotFoundInRouteWillBeIgnoredWhenLinkIsAssembled()
     {
-        $route = Route::get('/user/[:userId]')->to('my.GetActionTokenWithParam');
+        $route = RouteBuilder::route()->get('/user/[:userId]')->to('my.GetActionTokenWithParam')->build();
 
         $this->router->addRoute($route);
         $url = $this->router->generateUri('my.GetActionTokenWithParam', ['userId' => 123, 'sampleId' => 123]);
@@ -313,7 +292,7 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
     public function willThrowAnExceptionWhenNotAllParamReplacementsAreProvided()
     {
         $this->router->addRoute(
-            Route::get('/[:sampleId]/[:missingParam]')->to('my.GetActionTokenWithParam')
+            RouteBuilder::route()->get('/[:sampleId]/[:missingParam]')->to('my.GetActionTokenWithParam')->build()
         );
         $this->router->generateUri('my.GetActionTokenWithParam', ['sampleId' => 123]);
     }
@@ -332,7 +311,11 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(false));
 
         $this->router->addRoute(
-            Route::get('/company/[:companyId]')->to('companyAction')->ifMatches('companyId', $matcher)
+            RouteBuilder::route()
+                ->get('/company/[:companyId]')
+                ->to('companyAction')
+                ->ifMatches('companyId', $matcher)
+                ->build()
         );
         $this->router->generateUri('companyAction', ['companyId' => $paramValue]);
     }

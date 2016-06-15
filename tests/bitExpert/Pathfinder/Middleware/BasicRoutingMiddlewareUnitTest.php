@@ -10,11 +10,11 @@
  */
 namespace bitExpert\Pathfinder\Middleware;
 
+use bitExpert\Pathfinder\RouteBuilder;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
-use bitExpert\Pathfinder\Route;
 use bitExpert\Pathfinder\Router;
 use bitExpert\Pathfinder\RoutingResult;
 
@@ -58,7 +58,7 @@ class BasicRoutingMiddlewareUnitTest extends \PHPUnit_Framework_TestCase
     public function requestContainsRoutingResultInRoutingResultAttributeAfterRouting()
     {
         $self = $this;
-        $route = Route::get('/test')->to('testAction');
+        $route = RouteBuilder::route()->get('/test')->to('testAction')->build();
         $routingResult = RoutingResult::forSuccess($route);
 
         $this->router->expects($this->any())

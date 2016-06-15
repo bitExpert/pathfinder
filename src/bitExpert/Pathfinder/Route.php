@@ -10,10 +10,8 @@
  */
 namespace bitExpert\Pathfinder;
 
-use bitExpert\Pathfinder\Matcher\Matcher;
-
 /**
- * Route Domain object
+ * Route representation class
  */
 class Route
 {
@@ -41,242 +39,40 @@ class Route
     /**
      * Creates a new {@link \bitExpert\Pathfinder\Route}.
      *
-     * @param array|string $methods The HTTP methods the route is active (e.g. GET, POST, PUT, ...)
-     * @param string|null $path
-     * @param mixed|null $target
-     * @param callable[] $matchers Array key is the name of the path variable, Array value an array of matchers
+     * @param array $methods The HTTP methods the route is active (e.g. GET, POST, PUT, ...)
+     * @param string $path
+     * @param mixed $target
+     * @param array $matchers An array of matchers for params
+     * @param string|null $name The name of the route (has to be set if target is not a string)
      */
-    protected function __construct($methods = [], $path = null, $target = null, array $matchers = [])
+    public function __construct(array $methods, $path, $target, array $matchers = [], $name = null)
     {
+        if (!is_string($path) || empty($path)) {
+            throw new \InvalidArgumentException('A route needs a non-empty string as path');
+        }
+
+        if (empty($target) || (!is_string($target) && !is_callable($target))) {
+            throw new \InvalidArgumentException('A route needs a non-empty string or callable as target');
+        }
+
+        if (!empty($name) && !is_string($name)) {
+            throw new \InvalidArgumentException('A route name needs to be a string if defined');
+        }
+
+        if (count($methods) < 1) {
+            throw new \InvalidArgumentException('A route needs to accept at least one method');
+        }
+
+        if (!is_string($target) && empty($name)) {
+            throw new \InvalidArgumentException('A route with non-string target needs to have a name defined');
+        }
+
         $this->path = $path;
         $this->target = $target;
-        $this->methods = is_array($methods) ? $methods : [$methods];
+        $this->name = $name;
+        $this->methods = $methods;
         $this->methods = array_map('self::normalizeMethod', $this->methods);
         $this->matchers = $matchers;
-    }
-
-    /**
-     * Creates a new route instance.
-     *
-     * @param array $methods
-     * @param string|null $path
-     * @param mixed|null $target
-     * @return Route
-     */
-    public static function create($methods = [], $path = null, $target = null)
-    {
-        return new static($methods, $path, $target);
-    }
-
-    /**
-     * Creates a new GET accepting route.
-     *
-     * @param string|null $path
-     * @param mixed|null $target
-     * @return Route
-     */
-    public static function get($path = null, $target = null)
-    {
-        return self::create('GET', $path, $target);
-    }
-
-    /**
-     * Creates a new POST accepting route.
-     *
-     * @param string|null $path
-     * @param mixed|null $target
-     * @return Route
-     */
-    public static function post($path = null, $target = null)
-    {
-        return self::create('POST', $path, $target);
-    }
-
-    /**
-     * Creates a new PUT accepting route.
-     *
-     * @param string|null $path
-     * @param mixed|null $target
-     * @return Route
-     */
-    public static function put($path = null, $target = null)
-    {
-        return self::create('PUT', $path, $target);
-    }
-
-    /**
-     * Creates a new DELETE accepting route.
-     *
-     * @param string|null $path
-     * @param mixed|null $target
-     * @return Route
-     */
-    public static function delete($path = null, $target = null)
-    {
-        return self::create('DELETE', $path, $target);
-    }
-
-    /**
-     * Creates a new OPTIONS accepting route.
-     *
-     * @param string|null $path
-     * @param mixed|null $target
-     * @param callable[] $matchers The matcher or array of matchers for the param
-     * @return Route
-     */
-    public static function options($path = null, $target = null)
-    {
-        return self::create('OPTIONS', $path, $target);
-    }
-
-    /**
-     * Creates a new PATCH accepting route.
-     *
-     * @param string|null $path
-     * @param mixed|null $target
-     * @return Route
-     */
-    public static function patch($path = null, $target = null)
-    {
-        return self::create('PATCH', $path, $target);
-    }
-
-    /**
-     * Sets the method(s) which the route should accept.
-     *
-     * @param array|string $methods The HTTP method(s) the route should handle
-     * @return Route
-     */
-    public function accepting($methods)
-    {
-        $methods = is_array($methods) ? $methods : [$methods];
-
-        $instance = clone $this;
-        $normalizedMethods = array_map('self::normalizeMethod', $methods);
-        $instance->methods = array_unique(array_merge($instance->methods, $normalizedMethods));
-
-        return $instance;
-    }
-
-    /**
-     * Removes given method(s) from the set of methods the
-     * route should handle.
-     *
-     * @param array|string $methods The HTTP method(s) the route should no longer handle
-     * @return Route
-     */
-    public function refusing($methods)
-    {
-        $methods = is_array($methods) ? $methods : [$methods];
-
-        $instance = clone $this;
-        $normalizedMethods = array_map('self::normalizeMethod', $methods);
-
-        $instance->methods = array_diff($instance->methods, $normalizedMethods);
-
-        return $instance;
-    }
-
-    /**
-     * Sets matcher(s) which the given param should match
-     * for the route to be active.
-     *
-     * @param string $param The param name to set the matcher(s) for
-     * @param callable|callable[] The matcher or array of matchers for the param
-     * @return Route
-     * @throws \InvalidArgumentException
-     */
-    public function ifMatches($param, $matchers)
-    {
-        $instance = clone $this;
-
-        if (!array_key_exists($param, $instance->matchers)) {
-            $instance->matchers[$param] = [];
-        }
-
-        $matchers = is_array($matchers) ? $matchers : [$matchers];
-
-        foreach ($matchers as $matcher) {
-            if (!is_callable($matcher)) {
-                throw new \InvalidArgumentException(sprintf(
-                    'Given matcher is not a callable. See %s for signature.',
-                    Matcher::class
-                ));
-            }
-        }
-
-        $instance->matchers[$param] = array_merge($instance->matchers[$param], $matchers);
-
-        return $instance;
-    }
-
-    /**
-     * Returns a route having removed all formerly set matchers
-     * for the param with given name.
-     *
-     * @param string $param The name of the param all matchers should be removed for
-     * @return Route
-     */
-    public function whateverMatches($param)
-    {
-        $instance = clone $this;
-
-        if (array_key_exists($param, $this->matchers)) {
-            unset($instance->matchers[$param]);
-        }
-
-        return $instance;
-    }
-
-    /**
-     * Returns the route with a new source configuration.
-     *
-     * @param string $path The new path
-     * @return Route
-     */
-    public function from($path)
-    {
-        $instance = clone $this;
-        $instance->path = $path;
-        return $instance;
-    }
-
-    /**
-     * Returns the route with a new target.
-     *
-     * @param mixed $target The new target
-     * @return Route
-     */
-    public function to($target)
-    {
-        $instance = clone $this;
-        $instance->target = $target;
-        return $instance;
-    }
-
-    /**
-     * Returns a new instance of the route carrying the given name.
-     *
-     * @param $name
-     * @return Route
-     */
-    public function named($name)
-    {
-        $instance = clone $this;
-        $instance->name = $name;
-        return $instance;
-    }
-
-    /**
-     * Returns a new instance of the route having the name unset.
-     *
-     * @return Route
-     */
-    public function noName()
-    {
-        $instance = clone $this;
-        $instance->name = null;
-        return $instance;
     }
 
     /**
@@ -338,15 +134,5 @@ class Route
     protected function normalizeMethod($method)
     {
         return strtoupper(trim($method));
-    }
-
-    /**
-     * Returns whether the result carries a callable target.
-     *
-     * @return bool
-     */
-    public function hasCallableTarget()
-    {
-        return is_callable($this->target);
     }
 }

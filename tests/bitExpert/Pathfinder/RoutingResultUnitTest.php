@@ -23,7 +23,7 @@ class RoutingResultUnitTest extends \PHPUnit_Framework_TestCase
     public function forSuccessGeneratesValidResult()
     {
         $params = ['param1' => 'value1', 'param2' => 'value2'];
-        $route = Route::get('/test')->to('testAction');
+        $route = RouteBuilder::route()->get('/test')->to('testAction')->build();
         $result = RoutingResult::forSuccess($route, $params);
 
         $this->assertTrue($result->succeeded());
@@ -39,7 +39,7 @@ class RoutingResultUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function getParamsReturnsEmptyArrayIfNotBeenSet()
     {
-        $route = Route::get('/test')->to('testAction');
+        $route = RouteBuilder::route()->get('/test')->to('testAction')->build();
         $result = RoutingResult::forSuccess($route);
         $this->assertEquals([], $result->getParams());
     }
