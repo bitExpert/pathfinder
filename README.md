@@ -8,7 +8,7 @@ Router
 ------
 
 The router is responsible for resolving the target from the given route as well building an uri for a given 
-route identifier (and it`s parameters). Using the Psr7Router [Psr7Router](src/bitExpert/Pathfinder/Psr7Router.php) is pretty easy:
+route identifier (and it`s parameters). Using the [Psr7Router](src/bitExpert/Pathfinder/Psr7Router.php) is pretty easy:
 
 ```php
 $router = new \bitExpert\Pathfinder\Psr7Router();
