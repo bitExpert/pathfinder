@@ -2,11 +2,31 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 0.4.0 - TBD
+## 0.5.0 - TBD
 
 ### Added
 
 - Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
+## 0.4.0
+
+### Added
+
+- [#17](https://github.com/bitExpert/pathfinder/pull/17) Introduced RoutingResult in order to decouple routing result processing from routing (related to [#14](https://github.com/bitExpert/pathfinder/issues/14))
+- [#18](https://github.com/bitExpert/pathfinder/pull/18) Accept any callable as matcher
+- [#24](https://github.com/bitExpert/pathfinder/pull/24) Introduced RouteBuilder
 
 ### Deprecated
 
