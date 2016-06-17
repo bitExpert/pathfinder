@@ -112,8 +112,6 @@ abstract class AbstractRouter implements Router
      */
     public function addRoute(Route $route)
     {
-        $this->validateRoute($route);
-
         // get the specific path matcher for this route
         $pathMatcher = $this->getPathMatcherForRoute($route);
 
@@ -131,33 +129,6 @@ abstract class AbstractRouter implements Router
         $this->routes = [];
         foreach ($routes as $route) {
             $this->addRoute($route);
-        }
-    }
-
-    /**
-     * Validates given route for configuration correctness and throws a
-     * {@link \InvalidArgumentException} if any required configuration
-     * is missing. Returns true if everything's fine.
-     *
-     * @param Route $route
-     * @throws \InvalidArgumentException
-     */
-    protected function validateRoute(Route $route)
-    {
-        if (0 === count($route->getMethods())) {
-            throw new \InvalidArgumentException('Route must at least accept one request method');
-        }
-
-        if (null === $route->getPath()) {
-            throw new \InvalidArgumentException('Route must have defined a path');
-        }
-
-        if (null === $route->getTarget()) {
-            throw new \InvalidArgumentException('Route must have defined a target');
-        }
-
-        if (!is_string($route->getTarget()) && (null === $route->getName())) {
-            throw new \InvalidArgumentException('If defined route target is not a string a name has to be set');
         }
     }
 

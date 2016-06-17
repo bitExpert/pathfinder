@@ -24,28 +24,8 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function methodSetByConstructorGetsReturnedInCapitalLetters()
     {
-        $route = Route::create('get');
-        $this->assertSame(['GET'], $route->getMethods());
+        $route = new Route(['get'], '/', 'test');
 
-        $route = Route::create('get', '/', 'test');
-        $this->assertSame(['GET'], $route->getMethods());
-    }
-
-    /**
-     * @test
-     */
-    public function methodSetByFunctionGetsReturnedInCapitalLetters()
-    {
-        $route = Route::create()->accepting('get');
-        $this->assertSame(['GET'], $route->getMethods());
-    }
-
-    /**
-     * @test
-     */
-    public function methodSetByFactoryGetsReturnedInCapitalLetters()
-    {
-        $route = Route::create('get');
         $this->assertSame(['GET'], $route->getMethods());
     }
 
@@ -54,25 +34,7 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function pathSetByConstructorGetsReturnedAsIs()
     {
-        $route = Route::create('get', '/info');
-        $this->assertSame('/info', $route->getPath());
-    }
-
-    /**
-     * @test
-     */
-    public function pathSetByFunctionGetsReturnedAsIs()
-    {
-        $route = Route::create()->from('/info');
-        $this->assertSame('/info', $route->getPath());
-    }
-
-    /**
-     * @test
-     */
-    public function pathSetByFactoryGetsReturnedAsIs()
-    {
-        $route = Route::create('GET', '/info');
+        $route = new Route(['get'], '/info', 'test');
         $this->assertSame('/info', $route->getPath());
     }
 
@@ -81,244 +43,102 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
      */
     public function targetSetByConstructorGetsReturnedAsIs()
     {
-        $route = Route::create('get', '/info', 'test');
+        $route = new Route(['get'], '/', 'test');
         $this->assertSame('test', $route->getTarget());
     }
 
     /**
      * @test
      */
-    public function targetTokenSetByFunctionGetsReturnedAsIs()
+    public function nameSetByConstructorGetsReturnedAsIs()
     {
-        $route = Route::create()->to('test');
-        $this->assertSame('test', $route->getTarget());
+        $route = new Route(['get'], '/', 'test', [], 'testRoute');
+        $this->assertSame('testRoute', $route->getName());
     }
 
     /**
      * @test
      */
-    public function targetSetByFactoryGetsReturnedAsIs()
+    public function matchersSetByConstructorGetsReturnedAsIs()
     {
-        $route = Route::create('GET', '/test', 'test');
-        $this->assertSame('test', $route->getTarget());
-    }
+        $matchers = [
+            'param1' => [
+                $this->getMock(Matcher::class),
+                $this->getMock(Matcher::class)
+            ],
+            'param2' => [
+                $this->getMock(Matcher::class)
+            ]
+        ];
 
-    /**
-     * @test
-     */
-    public function settingPathIsImmutable()
-    {
-        $route = Route::create();
-        $route2 = $route->from('/test');
-
-        $this->assertInstanceOf(Route::class, $route2);
-        $this->assertNotEquals($route->getPath(), $route2->getPath());
-    }
-
-    /**
-     * @test
-     */
-    public function settingTargetIsImmutable()
-    {
-        $route = Route::create();
-        $route2 = $route->to('test');
-
-        $this->assertNotSame($route, $route2);
-    }
-
-    /**
-     * @test
-     */
-    public function addingMethodIsImmutable()
-    {
-        $route = Route::create();
-        $route2 = $route->accepting('GET');
-
-        $this->assertNotSame($route, $route2);
-    }
-
-    /**
-     * @test
-     */
-    public function removingMethodIsImmutable()
-    {
-        $route = Route::create(['POST', 'GET']);
-        $route2 = $route->refusing('GET');
-
-        $this->assertNotSame($route, $route2);
-    }
-
-    /**
-     * @test
-     */
-    public function addingMatcherIsImmutable()
-    {
-        $matcher = $this->getMock(Matcher::class);
-        $route = Route::create('/user/[:id]');
-        $route2 = $route->ifMatches('id', $matcher);
-
-        $this->assertNotSame($route, $route2);
-    }
-
-    /**
-     * @test
-     */
-    public function removingMatcherIsImmutable()
-    {
-        $matcher = $this->getMock(Matcher::class);
-        $route = Route::create('/user/[:id]')->ifMatches('id', $matcher);
-        $route2 = $route->whateverMatches('id');
-
-        $this->assertNotSame($route, $route2);
-    }
-
-    /**
-     * @test
-     */
-    public function callingNamedSetsNameCorrectly()
-    {
-        $name = 'routeName';
-        $route = Route::create()->named($name);
-
-        $this->assertEquals($name, $route->getName());
-    }
-
-    /**
-     * @test
-     */
-    public function callingNamedIsImmutable()
-    {
-        $name = 'routeName';
-        $route = Route::create();
-        $route2 = $route->named($name);
-
-        $this->assertNotSame($route, $route2);
-    }
-
-    /**
-     * @test
-     */
-    public function callingNoNameUnsetsNameCorrectly()
-    {
-        $name = 'routeName';
-        $route = Route::create()->named($name)->noName();
-
-        $this->assertNull($route->getName());
-    }
-
-    /**
-     * @test
-     */
-    public function callingNoNameIsImmutable()
-    {
-        $name = 'routeName';
-        $route = Route::create()->named($name);
-        $route2 = $route->noName();
-
-        $this->assertNotSame($route, $route2);
-    }
-
-    /**
-     * @test
-     */
-    public function acceptsCallableMatchers()
-    {
-        $thrown = false;
-
-        try {
-            Route::get('/order/[:orderId]')
-                ->to('my.GetActionTokenWithFunctionMatcher')
-                ->ifMatches('orderId', function ($orderId) {
-                    return ((int) $orderId > 0);
-                });
-        } catch (\Exception $e) {
-            $thrown = true;
-        }
-
-        $this->assertFalse($thrown);
+        $route = new Route(['get'], '/[:param1]/[:param2]', 'test', $matchers);
+        $this->assertSame($matchers, $route->getMatchers());
     }
 
     /**
      * @test
      * @expectedException \InvalidArgumentException
      */
-    public function throwsExceptionIfMatcherIsNotCallable()
+    public function throwsExceptionIfPathIsEmpty()
     {
-        Route::get('/user/[:userId]')->to('myAction')->ifMatches('userId', 'notCallable');
+        new Route(['get'], '', 'testAction');
     }
 
     /**
      * @test
+     * @expectedException \InvalidArgumentException
      */
-    public function whateverMatchesRemovesMatcher()
+    public function throwsExceptionIfPathIsNotAString()
     {
-        $route = Route::get('/[:param]')
-            ->to('myAction')
-            ->ifMatches('id', $this->getMockForAbstractClass(Matcher::class));
-
-        $route = $route->whateverMatches('id');
-
-        $this->assertArrayNotHasKey('id', $route->getMatchers());
+        new Route(['get'], 123, 'testAction');
     }
 
     /**
      * @test
+     * @expectedException \InvalidArgumentException
      */
-    public function returnsTrueIfTargetIsCallable()
+    public function throwsExceptionIfTargetIsEmpty()
     {
-        $route = Route::get('/users')->to(function () {
-            // do nothing
-        });
-
-        $this->assertTrue($route->hasCallableTarget());
+        new Route(['get'], '/test', '');
     }
-
 
     /**
      * @test
-     * @dataProvider httpMethodDataprovider
+     * @expectedException \InvalidArgumentException
      */
-    public function staticCreationFunctionsCreateCorrectRoutes($method)
+    public function throwsExceptionIfTargetIsNeitherAStringNorACallable()
     {
-        $target = 'test';
-        $path = '/[:param]';
-
-        $this->assertStaticRouteCreationFunction($method, $path, $target);
+        new Route(['get'], '/test', 123);
     }
 
     /**
-     * Asserts that the static route creation function for given method works
-     *
-     * @param $method
-     * @param string|null $path
-     * @param string|null $target
-     * @param array $matchers
+     * @test
+     * @expectedException \InvalidArgumentException
      */
-    protected function assertStaticRouteCreationFunction($method, $path = null, $target = null, $matchers = [])
+    public function throwsExceptionIfNoMethodIsAccepted()
     {
-        /** @var Route $route */
-        $route = forward_static_call(array(Route::class, $method), $path, $target, $matchers);
-        $this->assertInstanceOf(Route::class, $route);
-        $this->assertTrue(in_array(strtoupper($method), $route->getMethods()));
-        $this->assertEquals($path, $route->getPath());
-        $this->assertEquals($target, $route->getTarget());
-        $this->assertEquals($matchers, $route->getMatchers());
+        new Route([], '/test', 'testAction');
     }
 
     /**
-     * Dataprovider to return the http methods to use in the different testcases.
-     *
-     * @return array
+     * @test
+     * @expectedException \InvalidArgumentException
      */
-    public function httpMethodDataprovider()
+    public function throwsExceptionIfTargetIsNotAStringAndNoNameIsDefined()
     {
-        return [
-            ['get'],
-            ['post'],
-            ['put'],
-            ['delete'],
-            ['options'],
-            ['patch']
-        ];
+        $target = function () {
+
+        };
+
+        new Route(['get'], '/test', $target);
+    }
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     */
+    public function throwsExceptionIfNameIsNotAString()
+    {
+        new Route([], '/test', 'testAction', [], 123);
     }
 }
