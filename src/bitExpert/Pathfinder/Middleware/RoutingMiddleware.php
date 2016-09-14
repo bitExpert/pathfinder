@@ -45,5 +45,9 @@ interface RoutingMiddleware
      * @param callable|null $next
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null) : ResponseInterface;
+    public function __invoke(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        callable $next = null
+    ) : ResponseInterface;
 }

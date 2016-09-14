@@ -62,8 +62,11 @@ class BasicRoutingMiddleware implements RoutingMiddleware
      * @param callable|null $next
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null) : ResponseInterface
-    {
+    public function __invoke(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        callable $next = null
+    ) : ResponseInterface {
         $result = $this->router->match($request);
         $request = $this->applyRoutingResult($request, $result);
 
@@ -82,8 +85,10 @@ class BasicRoutingMiddleware implements RoutingMiddleware
      * @param RoutingResult $routingResult
      * @return ServerRequestInterface
      */
-    protected function applyRoutingResult(ServerRequestInterface $request, RoutingResult $routingResult) : ServerRequestInterface
-    {
+    protected function applyRoutingResult(
+        ServerRequestInterface $request,
+        RoutingResult $routingResult
+    ) : ServerRequestInterface {
         $routingParams = $routingResult->getParams();
         $params = array_merge($request->getQueryParams(), $routingParams);
         return $request->withQueryParams($params);

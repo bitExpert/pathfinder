@@ -129,7 +129,6 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
     public function throwsExceptionIfTargetIsNotAStringAndNoNameIsDefined()
     {
         $target = function () {
-
         };
 
         new Route(['get'], '/test', $target);
