@@ -65,11 +65,11 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
     {
         $matchers = [
             'param1' => [
-                $this->getMock(Matcher::class),
-                $this->getMock(Matcher::class)
+                $this->createMock(Matcher::class),
+                $this->createMock(Matcher::class)
             ],
             'param2' => [
-                $this->getMock(Matcher::class)
+                $this->createMock(Matcher::class)
             ]
         ];
 

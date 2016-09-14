@@ -307,7 +307,7 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
     public function willThrowAnExceptionWhenProvidingNotMatchingParams()
     {
         $paramValue = 'abc';
-        $matcher = $this->getMock(Matcher::class);
+        $matcher = $this->createMock(Matcher::class);
         $matcher->expects($this->once())
             ->method('__invoke')
             ->with($paramValue)

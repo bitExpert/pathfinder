@@ -86,7 +86,7 @@ class RouteBuilderUnitTest extends \PHPUnit_Framework_TestCase
     public function addingMatcherReturnsBuilder()
     {
         $builderOriginal = RouteBuilder::route();
-        $builder = $builderOriginal->ifMatches('id', $this->getMock(Matcher::class));
+        $builder = $builderOriginal->ifMatches('id', $this->createMock(Matcher::class));
 
         $this->assertSame($builderOriginal, $builder);
     }
@@ -230,8 +230,8 @@ class RouteBuilderUnitTest extends \PHPUnit_Framework_TestCase
         $route = RouteBuilder::route()
             ->get('/[:test]')
             ->to('test')
-            ->ifMatches('test', $this->getMock(Matcher::class))
-            ->ifMatches('test', $this->getMock(Matcher::class))
+            ->ifMatches('test', $this->createMock(Matcher::class))
+            ->ifMatches('test', $this->createMock(Matcher::class))
             ->build();
 
         $matchers = $route->getMatchers();
@@ -248,8 +248,8 @@ class RouteBuilderUnitTest extends \PHPUnit_Framework_TestCase
         $route = RouteBuilder::route()
             ->get('/[:test]')
             ->to('test')
-            ->ifMatches('test', $this->getMock(Matcher::class))
-            ->ifMatches('test', $this->getMock(Matcher::class))
+            ->ifMatches('test', $this->createMock(Matcher::class))
+            ->ifMatches('test', $this->createMock(Matcher::class))
             ->whateverMatches('test')
             ->build();
 
