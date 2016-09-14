@@ -69,6 +69,7 @@ class BasicRoutingMiddlewareUnitTest extends \PHPUnit_Framework_TestCase
 
         $next = function ($request, $response) use ($routingResult, $self) {
             $self->assertSame($routingResult, $request->getAttribute(RoutingResult::class));
+            return $response;
         };
 
         $this->middleware->__invoke($this->request, $this->response, $next);

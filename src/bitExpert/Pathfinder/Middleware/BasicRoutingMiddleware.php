@@ -24,7 +24,7 @@ class BasicRoutingMiddleware implements RoutingMiddleware
      */
     protected $router;
     /**
-     * @var String
+     * @var string
      */
     protected $routingResultAttribute;
 
@@ -32,9 +32,9 @@ class BasicRoutingMiddleware implements RoutingMiddleware
      * Creates a new {@link \bitExpert\Pathfinder\Middleware\BasicRoutingMiddleware}.
      *
      * @param Router $router
-     * @param String $routingResultAttribute
+     * @param string $routingResultAttribute
      */
-    public function __construct(Router $router, $routingResultAttribute)
+    public function __construct(Router $router, string $routingResultAttribute)
     {
         $this->router = $router;
         $this->routingResultAttribute = $routingResultAttribute;
@@ -43,7 +43,7 @@ class BasicRoutingMiddleware implements RoutingMiddleware
     /**
      * {@inheritdoc}
      */
-    public function getRoutingResultAttribute()
+    public function getRoutingResultAttribute() : string
     {
         return $this->routingResultAttribute;
     }
@@ -51,7 +51,7 @@ class BasicRoutingMiddleware implements RoutingMiddleware
     /**
      * {@inheritdoc}
      */
-    public function getRouter()
+    public function getRouter() : Router
     {
         return $this->router;
     }
@@ -62,7 +62,7 @@ class BasicRoutingMiddleware implements RoutingMiddleware
      * @param callable|null $next
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null) : ResponseInterface
     {
         $result = $this->router->match($request);
         $request = $this->applyRoutingResult($request, $result);
@@ -82,7 +82,7 @@ class BasicRoutingMiddleware implements RoutingMiddleware
      * @param RoutingResult $routingResult
      * @return ServerRequestInterface
      */
-    protected function applyRoutingResult(ServerRequestInterface $request, RoutingResult $routingResult)
+    protected function applyRoutingResult(ServerRequestInterface $request, RoutingResult $routingResult) : ServerRequestInterface
     {
         $routingParams = $routingResult->getParams();
         $params = array_merge($request->getQueryParams(), $routingParams);

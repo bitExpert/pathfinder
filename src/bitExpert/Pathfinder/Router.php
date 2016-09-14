@@ -45,7 +45,7 @@ interface Router
      * @param ServerRequestInterface $request
      * @return RoutingResult
      */
-    public function match(ServerRequestInterface $request);
+    public function match(ServerRequestInterface $request) : RoutingResult;
 
     /**
      * Creates a link to a target identified by the given target identifier. In

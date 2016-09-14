@@ -82,7 +82,7 @@ class Route
      *
      * @return string
      */
-    public function getPath()
+    public function getPath() : string
     {
         return $this->path;
     }
@@ -92,7 +92,7 @@ class Route
      *
      * @return string
      */
-    public function getTarget()
+    public function getTarget() : string
     {
         return $this->target;
     }
@@ -102,7 +102,7 @@ class Route
      *
      * @return array
      */
-    public function getMethods()
+    public function getMethods() : array
     {
         return $this->methods;
     }
@@ -112,7 +112,7 @@ class Route
      *
      * @return array
      */
-    public function getMatchers()
+    public function getMatchers() : array
     {
         return $this->matchers;
     }
@@ -120,7 +120,7 @@ class Route
     /**
      * Returns the name of the route.
      *
-     * @return string
+     * @return string|null
      */
     public function getName()
     {
@@ -131,9 +131,9 @@ class Route
      * Helper function to normalize HTTP request methods
      * (trimmed to uppercase).
      *
-     * @return callable
+     * @return string
      */
-    protected function normalizeMethod($method)
+    protected function normalizeMethod($method) : string
     {
         return strtoupper(trim($method));
     }

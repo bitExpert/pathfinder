@@ -21,7 +21,6 @@ class RoutingResult
     const FAILED_BAD_REQUEST = 400;
     const FAILED_NOT_FOUND = 404;
     const FAILED_METHOD_NOT_ALLOWED = 405;
-
     /**
      * @var bool
      */
@@ -58,7 +57,7 @@ class RoutingResult
      * @param array $params
      * @return RoutingResult
      */
-    public static function forSuccess(Route $route, array $params = [])
+    public static function forSuccess(Route $route, array $params = []) : RoutingResult
     {
         $result = new self();
         $result->success = true;
@@ -77,7 +76,7 @@ class RoutingResult
      * @param Route | null $route
      * @return RoutingResult
      */
-    public static function forFailure($failure, Route $route = null)
+    public static function forFailure($failure, Route $route = null) : RoutingResult
     {
         $result = new self();
         $result->success = false;
@@ -93,7 +92,7 @@ class RoutingResult
      * If success == false, it may carry the first found possible candidate
      * which does not fulfill all criteria to match exactly.
      *
-     * @return Route | null
+     * @return Route|null
      */
     public function getRoute()
     {
@@ -103,7 +102,7 @@ class RoutingResult
     /**
      * Returns the failure reason if success == false.
      */
-    public function getFailure()
+    public function getFailure() : int
     {
         return $this->failure;
     }
@@ -113,7 +112,7 @@ class RoutingResult
      *
      * @return array
      */
-    public function getParams()
+    public function getParams() : array
     {
         return $this->params;
     }
@@ -121,9 +120,9 @@ class RoutingResult
     /**
      * Returns whether the routing process succeeded.
      *
-     * @return mixed
+     * @return bool
      */
-    public function succeeded()
+    public function succeeded() : bool
     {
         return $this->success;
     }
@@ -133,7 +132,7 @@ class RoutingResult
      *
      * @return bool
      */
-    public function failed()
+    public function failed() : bool
     {
         return !$this->success;
     }
@@ -143,7 +142,7 @@ class RoutingResult
      *
      * @return bool
      */
-    public function hasRoute()
+    public function hasRoute() : bool
     {
         return (null !== $this->route);
     }

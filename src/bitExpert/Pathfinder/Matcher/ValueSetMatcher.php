@@ -35,7 +35,7 @@ class ValueSetMatcher implements Matcher
     /**
      * @inheritdoc
      */
-    public function __invoke($value)
+    public function __invoke($value) : bool
     {
         return in_array($value, $this->validValues);
     }

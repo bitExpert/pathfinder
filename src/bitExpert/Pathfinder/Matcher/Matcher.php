@@ -25,5 +25,5 @@ interface Matcher
      * @param mixed $value
      * @return bool
      */
-    public function __invoke($value);
+    public function __invoke($value) : bool;
 }

@@ -25,7 +25,7 @@ class Psr7Router extends AbstractRouter
     /**
      * {@inheritdoc}
      */
-    public function match(ServerRequestInterface $request)
+    public function match(ServerRequestInterface $request) : RoutingResult
     {
         $requestPath = $request->getUri()->getPath();
 
@@ -139,7 +139,7 @@ class Psr7Router extends AbstractRouter
      * @param array $params
      * @return array
      */
-    protected function mapParams(array $params)
+    protected function mapParams(array $params) : array
     {
         unset($params[0]);
         foreach ($params as $name => $value) {

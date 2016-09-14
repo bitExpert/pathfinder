@@ -23,7 +23,7 @@ class ConstantSetMatcher extends ValueSetMatcher
      * @param mixed $classIdentifier Class or object to get the constants from
      * @param string $pattern A simplified expression using * as placeholder
      */
-    public function __construct($classIdentifier, $pattern)
+    public function __construct($classIdentifier, string $pattern)
     {
         $regex = $this->transformPatternToRegEx($pattern);
         $values = $this->getConstantValues($classIdentifier, $regex);
@@ -39,7 +39,7 @@ class ConstantSetMatcher extends ValueSetMatcher
      * @param string $regex
      * @return array
      */
-    protected function getConstantValues($classIdentifier, $regex)
+    protected function getConstantValues(string $classIdentifier, string $regex) : array
     {
         $reflectionClass = new \ReflectionClass($classIdentifier);
         $constants = $reflectionClass->getConstants();
@@ -64,10 +64,10 @@ class ConstantSetMatcher extends ValueSetMatcher
      * Transforms a simplified pattern (* for multiple characters ? for one)
      * to a regular expression.
      *
-     * @param $pattern
-     * @return mixed
+     * @param string $pattern
+     * @return string
      */
-    protected function transformPatternToRegEx($pattern)
+    protected function transformPatternToRegEx(string $pattern) : string
     {
         $pattern = str_replace('*', '.*', $pattern);
         $pattern = str_replace('?', '.', $pattern);

@@ -27,7 +27,7 @@ class RegExMatcher implements Matcher
      *
      * @param string $regex
      */
-    public function __construct($regex)
+    public function __construct(string $regex)
     {
         $this->regex = $regex;
     }
@@ -35,7 +35,7 @@ class RegExMatcher implements Matcher
     /**
      * @inheritdoc
      */
-    public function __invoke($value)
+    public function __invoke($value) : bool
     {
         $value = str_replace('#', '\#', $value);
         return (preg_match(sprintf('#^%s$#', $this->regex), $value) > 0);

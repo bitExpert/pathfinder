@@ -47,7 +47,7 @@ abstract class AbstractRouter implements Router
      * @param array $params The names variables and values
      * @return bool
      */
-    protected function matchParams(Route $route, $params)
+    protected function matchParams(Route $route, array $params) : bool
     {
         $matchers = $route->getMatchers();
 
@@ -140,7 +140,7 @@ abstract class AbstractRouter implements Router
      * @param Route $route
      * @return string
      */
-    protected function getRouteIdentifier(Route $route)
+    protected function getRouteIdentifier(Route $route) : string
     {
         return empty($route->getName()) ? $route->getTarget() : $route->getName();
     }
