@@ -8,6 +8,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+declare(strict_types = 1);
+
 namespace bitExpert\Pathfinder;
 
 use Psr\Http\Message\ServerRequestInterface;
@@ -125,7 +127,7 @@ class Psr7Router extends AbstractRouter
         $link = $route->getPath();
 
         foreach ($params as $name => $value) {
-            $link = str_replace('[:' . $name . ']', urlencode($value), $link);
+            $link = str_replace('[:' . $name . ']', urlencode((string) $value), $link);
         }
 
         return $link;
