@@ -90,15 +90,6 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
      * @test
      * @expectedException \InvalidArgumentException
      */
-    public function throwsExceptionIfPathIsNotAString()
-    {
-        new Route(['get'], 123, 'testAction');
-    }
-
-    /**
-     * @test
-     * @expectedException \InvalidArgumentException
-     */
     public function throwsExceptionIfTargetIsEmpty()
     {
         new Route(['get'], '/test', '');

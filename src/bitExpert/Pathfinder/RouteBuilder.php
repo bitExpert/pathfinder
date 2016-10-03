@@ -90,7 +90,7 @@ class RouteBuilder
      * @param string|null $routeClass
      * @return RouteBuilder
      */
-    public static function route($routeClass = null) : RouteBuilder
+    public static function route(string $routeClass = null) : RouteBuilder
     {
         $routeClass = $routeClass ? $routeClass : self::$defaultRouteClass;
 

@@ -150,7 +150,7 @@ abstract class AbstractRouter implements Router
      * used for matching the request.
      *
      * @param Route $route
-     * @return mixed
+     * @return string
      */
-    abstract protected function getPathMatcherForRoute(Route $route);
+    abstract protected function getPathMatcherForRoute(Route $route) : string;
 }

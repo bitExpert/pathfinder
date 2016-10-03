@@ -254,7 +254,7 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
      * @test
      * @dataProvider paramsProvider
      */
-    public function paramsAreIgnoredForRoutesWithoutAnyParams($paramname, $paramvalue)
+    public function paramsAreIgnoredForRoutesWithoutAnyParams(string $paramname, $paramvalue)
     {
         $route = RouteBuilder::route()->get('/users')->to('my.GetActionToken')->build();
         $this->router->addRoute($route);

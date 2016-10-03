@@ -26,7 +26,7 @@ class Route
      */
     protected $path;
     /**
-     * @var string
+     * @var mixed
      */
     protected $target;
     /**
@@ -47,9 +47,9 @@ class Route
      * @param array $matchers An array of matchers for params
      * @param string|null $name The name of the route (has to be set if target is not a string)
      */
-    public function __construct(array $methods, $path, $target, array $matchers = [], $name = null)
+    public function __construct(array $methods, string $path, $target, array $matchers = [], $name = null)
     {
-        if (!is_string($path) || empty($path)) {
+        if (empty($path)) {
             throw new \InvalidArgumentException('A route needs a non-empty string as path');
         }
 
@@ -90,9 +90,9 @@ class Route
     /**
      * Returns the target which is associated with the route.
      *
-     * @return string
+     * @return mixed
      */
-    public function getTarget() : string
+    public function getTarget()
     {
         return $this->target;
     }
@@ -131,9 +131,10 @@ class Route
      * Helper function to normalize HTTP request methods
      * (trimmed to uppercase).
      *
+     * @param string $method
      * @return string
      */
-    protected function normalizeMethod($method) : string
+    protected function normalizeMethod(string $method) : string
     {
         return strtoupper(trim($method));
     }

@@ -89,7 +89,7 @@ class Psr7Router extends AbstractRouter
     /**
      * {@inheritdoc}
      */
-    public function generateUri($routeIdentifier, array $params = [])
+    public function generateUri($routeIdentifier, array $params = []) : string
     {
         if (empty($routeIdentifier)) {
             throw new \InvalidArgumentException(
@@ -156,7 +156,7 @@ class Psr7Router extends AbstractRouter
     /**
      * {@inheritdoc}
      */
-    protected function getPathMatcherForRoute(Route $route)
+    protected function getPathMatcherForRoute(Route $route) : string
     {
         $pathMatcher = preg_replace('#\[:(.+?)\]#i', '(?P<$1>[^/]+?)/?', $route->getPath());
         return sprintf('#^%s$#i', $pathMatcher);

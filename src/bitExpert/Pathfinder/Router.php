@@ -54,8 +54,8 @@ interface Router
      *
      * @param mixed $target
      * @param array $params
-     * @return string|null
+     * @return string
      * @throws \InvalidArgumentException
      */
-    public function generateUri($target, array $params = []);
+    public function generateUri($target, array $params = []) : string;
 }
