@@ -8,6 +8,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+declare(strict_types = 1);
+
 namespace bitExpert\Pathfinder\Matcher;
 
 /**
@@ -21,7 +23,7 @@ class ConstantSetMatcher extends ValueSetMatcher
      * @param mixed $classIdentifier Class or object to get the constants from
      * @param string $pattern A simplified expression using * as placeholder
      */
-    public function __construct($classIdentifier, $pattern)
+    public function __construct($classIdentifier, string $pattern)
     {
         $regex = $this->transformPatternToRegEx($pattern);
         $values = $this->getConstantValues($classIdentifier, $regex);
@@ -37,23 +39,14 @@ class ConstantSetMatcher extends ValueSetMatcher
      * @param string $regex
      * @return array
      */
-    protected function getConstantValues($classIdentifier, $regex)
+    protected function getConstantValues(string $classIdentifier, string $regex) : array
     {
         $reflectionClass = new \ReflectionClass($classIdentifier);
         $constants = $reflectionClass->getConstants();
-        $names = array_keys($constants);
 
-        // since ARRAY_FILTER_USE_KEY is introduced in PHP 5.6 and we are currently also supporting
-        // PHP 5.5, we need to go the clumsy, less elegant way...
-        $filter = function ($name) use ($regex) {
-            return preg_match($regex, $name);
-        };
-
-        $validNames = array_filter($names, $filter);
-        $validValues = [];
-        foreach ($validNames as $name) {
-            $validValues[] = $constants[$name];
-        }
+        $validValues = array_filter($constants, function ($constantName) use ($regex) {
+            return preg_match($regex, $constantName);
+        }, ARRAY_FILTER_USE_KEY);
 
         return $validValues;
     }
@@ -62,10 +55,10 @@ class ConstantSetMatcher extends ValueSetMatcher
      * Transforms a simplified pattern (* for multiple characters ? for one)
      * to a regular expression.
      *
-     * @param $pattern
-     * @return mixed
+     * @param string $pattern
+     * @return string
      */
-    protected function transformPatternToRegEx($pattern)
+    protected function transformPatternToRegEx(string $pattern) : string
     {
         $pattern = str_replace('*', '.*', $pattern);
         $pattern = str_replace('?', '.', $pattern);

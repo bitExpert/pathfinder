@@ -8,6 +8,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+declare(strict_types = 1);
+
 namespace bitExpert\Pathfinder;
 
 use Psr\Http\Message\ServerRequestInterface;
@@ -250,12 +252,13 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @dataProvider paramsProvider
      */
-    public function paramsAreIgnoredForRoutesWithoutAnyParams()
+    public function paramsAreIgnoredForRoutesWithoutAnyParams(string $paramname, $paramvalue)
     {
         $route = RouteBuilder::route()->get('/users')->to('my.GetActionToken')->build();
         $this->router->addRoute($route);
-        $url = $this->router->generateUri('my.GetActionToken', ['sampleId' => 456]);
+        $url = $this->router->generateUri('my.GetActionToken', [$paramname => $paramvalue]);
 
         $this->assertSame('/users', $url);
     }
@@ -304,7 +307,7 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
     public function willThrowAnExceptionWhenProvidingNotMatchingParams()
     {
         $paramValue = 'abc';
-        $matcher = $this->getMock(Matcher::class);
+        $matcher = $this->createMock(Matcher::class);
         $matcher->expects($this->once())
             ->method('__invoke')
             ->with($paramValue)
@@ -318,5 +321,17 @@ class Psr7RouterUnitTest extends \PHPUnit_Framework_TestCase
                 ->build()
         );
         $this->router->generateUri('companyAction', ['companyId' => $paramValue]);
+    }
+
+    public function paramsProvider()
+    {
+        return [
+            ['sampleId', ''],
+            ['sampleId', '456'],
+            ['sampleId', 456],
+            ['sampleId', 456.5],
+            ['sampleId', false],
+            ['sampleId', null],
+        ];
     }
 }

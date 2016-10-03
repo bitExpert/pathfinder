@@ -8,6 +8,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+declare(strict_types = 1);
+
 namespace bitExpert\Pathfinder\Matcher;
 
 /**
@@ -23,5 +25,5 @@ interface Matcher
      * @param mixed $value
      * @return bool
      */
-    public function __invoke($value);
+    public function __invoke($value) : bool;
 }

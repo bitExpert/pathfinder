@@ -8,8 +8,11 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+declare(strict_types = 1);
+
 namespace bitExpert\Pathfinder\Middleware;
 
+use bitExpert\Pathfinder\Router;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -23,16 +26,16 @@ interface RoutingMiddleware
      * Returns the name of the request attribute the routing result will be
      * stored in.
      *
-     * @return String
+     * @return string
      */
-    public function getRoutingResultAttribute();
+    public function getRoutingResultAttribute() : string;
 
     /**
      * Returns the configured router.
      *
-     * @return \bitExpert\Pathfinder\Router
+     * @return Router
      */
-    public function getRouter();
+    public function getRouter() : Router;
 
     /**
      * PSR-7 middleware signature magic method.
@@ -42,5 +45,9 @@ interface RoutingMiddleware
      * @param callable|null $next
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null);
+    public function __invoke(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        callable $next = null
+    ) : ResponseInterface;
 }

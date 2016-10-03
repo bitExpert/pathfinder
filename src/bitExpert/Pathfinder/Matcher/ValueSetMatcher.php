@@ -8,6 +8,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+declare(strict_types = 1);
+
 namespace bitExpert\Pathfinder\Matcher;
 
 /**
@@ -33,7 +35,7 @@ class ValueSetMatcher implements Matcher
     /**
      * @inheritdoc
      */
-    public function __invoke($value)
+    public function __invoke($value) : bool
     {
         return in_array($value, $this->validValues);
     }

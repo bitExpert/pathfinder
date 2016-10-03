@@ -8,6 +8,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+declare(strict_types = 1);
+
 namespace bitExpert\Pathfinder;
 
 use Psr\Http\Message\ServerRequestInterface;
@@ -23,7 +25,7 @@ class Psr7Router extends AbstractRouter
     /**
      * {@inheritdoc}
      */
-    public function match(ServerRequestInterface $request)
+    public function match(ServerRequestInterface $request) : RoutingResult
     {
         $requestPath = $request->getUri()->getPath();
 
@@ -87,7 +89,7 @@ class Psr7Router extends AbstractRouter
     /**
      * {@inheritdoc}
      */
-    public function generateUri($routeIdentifier, array $params = [])
+    public function generateUri($routeIdentifier, array $params = []) : string
     {
         if (empty($routeIdentifier)) {
             throw new \InvalidArgumentException(
@@ -125,7 +127,7 @@ class Psr7Router extends AbstractRouter
         $link = $route->getPath();
 
         foreach ($params as $name => $value) {
-            $link = str_replace('[:' . $name . ']', urlencode($value), $link);
+            $link = str_replace('[:' . $name . ']', urlencode((string) $value), $link);
         }
 
         return $link;
@@ -137,7 +139,7 @@ class Psr7Router extends AbstractRouter
      * @param array $params
      * @return array
      */
-    protected function mapParams(array $params)
+    protected function mapParams(array $params) : array
     {
         unset($params[0]);
         foreach ($params as $name => $value) {
@@ -154,7 +156,7 @@ class Psr7Router extends AbstractRouter
     /**
      * {@inheritdoc}
      */
-    protected function getPathMatcherForRoute(Route $route)
+    protected function getPathMatcherForRoute(Route $route) : string
     {
         $pathMatcher = preg_replace('#\[:(.+?)\]#i', '(?P<$1>[^/]+?)/?', $route->getPath());
         return sprintf('#^%s$#i', $pathMatcher);

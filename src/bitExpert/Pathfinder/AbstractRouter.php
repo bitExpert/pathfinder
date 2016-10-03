@@ -8,6 +8,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+declare(strict_types = 1);
+
 namespace bitExpert\Pathfinder;
 
 use bitExpert\Slf4PsrLog\LoggerFactory;
@@ -45,7 +47,7 @@ abstract class AbstractRouter implements Router
      * @param array $params The names variables and values
      * @return bool
      */
-    protected function matchParams(Route $route, $params)
+    protected function matchParams(Route $route, array $params) : bool
     {
         $matchers = $route->getMatchers();
 
@@ -138,7 +140,7 @@ abstract class AbstractRouter implements Router
      * @param Route $route
      * @return string
      */
-    protected function getRouteIdentifier(Route $route)
+    protected function getRouteIdentifier(Route $route) : string
     {
         return empty($route->getName()) ? $route->getTarget() : $route->getName();
     }
@@ -148,7 +150,7 @@ abstract class AbstractRouter implements Router
      * used for matching the request.
      *
      * @param Route $route
-     * @return mixed
+     * @return string
      */
-    abstract protected function getPathMatcherForRoute(Route $route);
+    abstract protected function getPathMatcherForRoute(Route $route) : string;
 }

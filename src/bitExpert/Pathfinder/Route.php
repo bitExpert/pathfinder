@@ -8,6 +8,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+declare(strict_types = 1);
+
 namespace bitExpert\Pathfinder;
 
 /**
@@ -24,7 +26,7 @@ class Route
      */
     protected $path;
     /**
-     * @var string
+     * @var mixed
      */
     protected $target;
     /**
@@ -45,9 +47,9 @@ class Route
      * @param array $matchers An array of matchers for params
      * @param string|null $name The name of the route (has to be set if target is not a string)
      */
-    public function __construct(array $methods, $path, $target, array $matchers = [], $name = null)
+    public function __construct(array $methods, string $path, $target, array $matchers = [], $name = null)
     {
-        if (!is_string($path) || empty($path)) {
+        if (empty($path)) {
             throw new \InvalidArgumentException('A route needs a non-empty string as path');
         }
 
@@ -80,7 +82,7 @@ class Route
      *
      * @return string
      */
-    public function getPath()
+    public function getPath() : string
     {
         return $this->path;
     }
@@ -88,7 +90,7 @@ class Route
     /**
      * Returns the target which is associated with the route.
      *
-     * @return string
+     * @return mixed
      */
     public function getTarget()
     {
@@ -100,7 +102,7 @@ class Route
      *
      * @return array
      */
-    public function getMethods()
+    public function getMethods() : array
     {
         return $this->methods;
     }
@@ -110,7 +112,7 @@ class Route
      *
      * @return array
      */
-    public function getMatchers()
+    public function getMatchers() : array
     {
         return $this->matchers;
     }
@@ -118,7 +120,7 @@ class Route
     /**
      * Returns the name of the route.
      *
-     * @return string
+     * @return string|null
      */
     public function getName()
     {
@@ -129,9 +131,10 @@ class Route
      * Helper function to normalize HTTP request methods
      * (trimmed to uppercase).
      *
-     * @return callable
+     * @param string $method
+     * @return string
      */
-    protected function normalizeMethod($method)
+    protected function normalizeMethod(string $method) : string
     {
         return strtoupper(trim($method));
     }

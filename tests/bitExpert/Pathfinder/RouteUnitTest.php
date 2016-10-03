@@ -8,6 +8,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+declare(strict_types = 1);
+
 namespace bitExpert\Pathfinder;
 
 use bitExpert\Pathfinder\Matcher\Matcher;
@@ -63,11 +65,11 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
     {
         $matchers = [
             'param1' => [
-                $this->getMock(Matcher::class),
-                $this->getMock(Matcher::class)
+                $this->createMock(Matcher::class),
+                $this->createMock(Matcher::class)
             ],
             'param2' => [
-                $this->getMock(Matcher::class)
+                $this->createMock(Matcher::class)
             ]
         ];
 
@@ -82,15 +84,6 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
     public function throwsExceptionIfPathIsEmpty()
     {
         new Route(['get'], '', 'testAction');
-    }
-
-    /**
-     * @test
-     * @expectedException \InvalidArgumentException
-     */
-    public function throwsExceptionIfPathIsNotAString()
-    {
-        new Route(['get'], 123, 'testAction');
     }
 
     /**
@@ -127,7 +120,6 @@ class RouteUnitTest extends \PHPUnit_Framework_TestCase
     public function throwsExceptionIfTargetIsNotAStringAndNoNameIsDefined()
     {
         $target = function () {
-
         };
 
         new Route(['get'], '/test', $target);

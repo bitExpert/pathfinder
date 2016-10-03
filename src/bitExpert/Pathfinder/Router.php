@@ -8,6 +8,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+declare(strict_types = 1);
+
 namespace bitExpert\Pathfinder;
 
 use Psr\Http\Message\ServerRequestInterface;
@@ -43,7 +45,7 @@ interface Router
      * @param ServerRequestInterface $request
      * @return RoutingResult
      */
-    public function match(ServerRequestInterface $request);
+    public function match(ServerRequestInterface $request) : RoutingResult;
 
     /**
      * Creates a link to a target identified by the given target identifier. In
@@ -52,8 +54,8 @@ interface Router
      *
      * @param mixed $target
      * @param array $params
-     * @return string|null
+     * @return string
      * @throws \InvalidArgumentException
      */
-    public function generateUri($target, array $params = []);
+    public function generateUri($target, array $params = []) : string;
 }

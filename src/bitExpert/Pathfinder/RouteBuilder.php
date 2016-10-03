@@ -8,6 +8,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+declare(strict_types = 1);
+
 namespace bitExpert\Pathfinder;
 
 /**
@@ -88,7 +90,7 @@ class RouteBuilder
      * @param string|null $routeClass
      * @return RouteBuilder
      */
-    public static function route($routeClass = null)
+    public static function route(string $routeClass = null) : RouteBuilder
     {
         $routeClass = $routeClass ? $routeClass : self::$defaultRouteClass;
 
@@ -100,7 +102,7 @@ class RouteBuilder
      *
      * @return Route
      */
-    public function build()
+    public function build() : Route
     {
         return new $this->routeClass($this->methods, $this->path, $this->target, $this->matchers, $this->name);
     }
@@ -108,10 +110,10 @@ class RouteBuilder
     /**
      * Creates a new HEAD accepting route.
      *
-     * @param string|null $path
+     * @param string $path
      * @return RouteBuilder
      */
-    public function head($path)
+    public function head(string $path) : RouteBuilder
     {
         return $this->from($path)->accepting('HEAD');
     }
@@ -119,10 +121,10 @@ class RouteBuilder
     /**
      * Creates a new GET accepting route.
      *
-     * @param string|null $path
+     * @param string $path
      * @return RouteBuilder
      */
-    public function get($path)
+    public function get(string $path) : RouteBuilder
     {
         return $this->from($path)->accepting('GET');
     }
@@ -130,10 +132,10 @@ class RouteBuilder
     /**
      * Creates a new POST accepting route.
      *
-     * @param string|null $path
+     * @param string $path
      * @return RouteBuilder
      */
-    public function post($path)
+    public function post(string $path) : RouteBuilder
     {
         return $this->from($path)->accepting('POST');
     }
@@ -141,10 +143,10 @@ class RouteBuilder
     /**
      * Creates a new PUT accepting route.
      *
-     * @param string|null $path
+     * @param string $path
      * @return RouteBuilder
      */
-    public function put($path)
+    public function put(string $path) : RouteBuilder
     {
         return $this->from($path)->accepting('PUT');
     }
@@ -152,10 +154,10 @@ class RouteBuilder
     /**
      * Creates a new DELETE accepting route.
      *
-     * @param string|null $path
+     * @param string $path
      * @return RouteBuilder
      */
-    public function delete($path)
+    public function delete(string $path) : RouteBuilder
     {
         return $this->from($path)->accepting('DELETE');
     }
@@ -163,10 +165,10 @@ class RouteBuilder
     /**
      * Creates a new OPTIONS accepting route.
      *
-     * @param string|null $path
+     * @param string $path
      * @return RouteBuilder
      */
-    public function options($path)
+    public function options(string $path) : RouteBuilder
     {
         return $this->from($path)->accepting('OPTIONS');
     }
@@ -174,10 +176,10 @@ class RouteBuilder
     /**
      * Creates a new PATCH accepting route.
      *
-     * @param string|null $path
+     * @param string $path
      * @return RouteBuilder
      */
-    public function patch($path)
+    public function patch(string $path) : RouteBuilder
     {
         return $this->from($path)->accepting('PATCH');
     }
@@ -188,7 +190,7 @@ class RouteBuilder
      * @param string $method The HTTP method(s) the route should handle
      * @return RouteBuilder
      */
-    public function accepting($method)
+    public function accepting(string $method) : RouteBuilder
     {
         $method = strtoupper($method);
         $this->methods = array_unique(array_merge($this->methods, [$method]));
@@ -203,7 +205,7 @@ class RouteBuilder
      * @param string $method The HTTP method(s) the route should no longer handle
      * @return RouteBuilder
      */
-    public function refusing($method)
+    public function refusing(string $method) : RouteBuilder
     {
         $method = strtoupper($method);
         $this->methods = array_diff($this->methods, [$method]);
@@ -220,7 +222,7 @@ class RouteBuilder
      * @return RouteBuilder
      * @throws \InvalidArgumentException
      */
-    public function ifMatches($param, callable $matcher)
+    public function ifMatches(string $param, callable $matcher) : RouteBuilder
     {
         if (!array_key_exists($param, $this->matchers)) {
             $this->matchers[$param] = [];
@@ -238,7 +240,7 @@ class RouteBuilder
      * @param string $param The name of the param all matchers should be removed for
      * @return RouteBuilder
      */
-    public function whateverMatches($param)
+    public function whateverMatches(string $param) : RouteBuilder
     {
         if (array_key_exists($param, $this->matchers)) {
             unset($this->matchers[$param]);
@@ -253,7 +255,7 @@ class RouteBuilder
      * @param string $path The new path
      * @return RouteBuilder
      */
-    public function from($path)
+    public function from(string $path) : RouteBuilder
     {
         $this->path = $path;
         return $this;
@@ -265,7 +267,7 @@ class RouteBuilder
      * @param mixed $target The new target
      * @return RouteBuilder
      */
-    public function to($target)
+    public function to($target) : RouteBuilder
     {
         $this->target = $target;
         return $this;
@@ -274,10 +276,10 @@ class RouteBuilder
     /**
      * Returns a new instance of the route carrying the given name.
      *
-     * @param $name
+     * @param string $name
      * @return RouteBuilder
      */
-    public function named($name)
+    public function named(string $name) : RouteBuilder
     {
         $this->name = $name;
         return $this;
@@ -288,7 +290,7 @@ class RouteBuilder
      *
      * @return RouteBuilder
      */
-    public function noName()
+    public function noName() : RouteBuilder
     {
         $this->name = null;
         return $this;
