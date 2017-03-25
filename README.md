@@ -2,7 +2,7 @@
 A PHP routing component.
 
 [![Build Status](https://travis-ci.org/bitExpert/pathfinder.svg?branch=master)](https://travis-ci.org/bitExpert/pathfinder)
-[![Dependency Status](https://www.versioneye.com/user/projects/5750a15d91bfda003631930d/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5750a15d91bfda003631930d)
+[![Dependency Status](https://www.versioneye.com/user/projects/57d9b2a97129660042d111c6/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/57d9b2a97129660042d111c6)
 
 Router
 ------
